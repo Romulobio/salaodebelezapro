@@ -3,8 +3,29 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+// Pages
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/auth/Login";
+
+// Manager Pages
+import ManagerDashboard from "./pages/manager/ManagerDashboard";
+import NovaBarbearia from "./pages/manager/NovaBarbearia";
+
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import Servicos from "./pages/admin/Servicos";
+import Barbeiros from "./pages/admin/Barbeiros";
+import Agenda from "./pages/admin/Agenda";
+
+// Booking Pages
+import AgendarServico from "./pages/booking/AgendarServico";
+import AgendarBarbeiro from "./pages/booking/AgendarBarbeiro";
+import AgendarData from "./pages/booking/AgendarData";
+import AgendarHorario from "./pages/booking/AgendarHorario";
+import Pagamento from "./pages/booking/Pagamento";
+import Sucesso from "./pages/booking/Sucesso";
 
 const queryClient = new QueryClient();
 
@@ -15,8 +36,30 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          {/* Public */}
           <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/auth/login" element={<Login />} />
+
+          {/* Manager Panel */}
+          <Route path="/manager" element={<ManagerDashboard />} />
+          <Route path="/manager/barbearias" element={<ManagerDashboard />} />
+          <Route path="/manager/barbearias/nova" element={<NovaBarbearia />} />
+
+          {/* Admin Panel */}
+          <Route path="/admin/:slug" element={<AdminDashboard />} />
+          <Route path="/admin/:slug/servicos" element={<Servicos />} />
+          <Route path="/admin/:slug/barbeiros" element={<Barbeiros />} />
+          <Route path="/admin/:slug/agenda" element={<Agenda />} />
+
+          {/* Booking Flow */}
+          <Route path="/agendar/:slug" element={<AgendarServico />} />
+          <Route path="/agendar/:slug/barbeiro" element={<AgendarBarbeiro />} />
+          <Route path="/agendar/:slug/data" element={<AgendarData />} />
+          <Route path="/agendar/:slug/horario" element={<AgendarHorario />} />
+          <Route path="/agendar/:slug/pagamento" element={<Pagamento />} />
+          <Route path="/agendar/:slug/sucesso" element={<Sucesso />} />
+
+          {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
