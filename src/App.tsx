@@ -17,6 +17,7 @@ import NovaBarbearia from "./pages/manager/NovaBarbearia";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Servicos from "./pages/admin/Servicos";
 import Barbeiros from "./pages/admin/Barbeiros";
+import Financeiro from "./pages/admin/Financeiro";
 import Agenda from "./pages/admin/Agenda";
 
 // Booking Pages
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/admin/:slug" element={<AdminDashboard />} />
           <Route path="/admin/:slug/servicos" element={<Servicos />} />
           <Route path="/admin/:slug/barbeiros" element={<Barbeiros />} />
+          <Route path="/admin/:slug/financeiro" element={<Financeiro />} />
           <Route path="/admin/:slug/agenda" element={<Agenda />} />
 
           {/* Booking Flow */}

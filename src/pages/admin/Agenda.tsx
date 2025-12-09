@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
-import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, Filter } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { mockAgendamentos } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 import { Agendamento } from '@/types/barbershop';
+
+type StatusFiltro = 'todos' | 'pendente' | 'confirmado' | 'concluido' | 'cancelado';
 
 const statusConfig = {
   pendente: { label: 'Pendente', icon: AlertCircle, className: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' },
@@ -16,17 +18,39 @@ const statusConfig = {
   cancelado: { label: 'Cancelado', icon: XCircle, className: 'bg-destructive/10 text-destructive border-destructive/30' },
 };
 
+const filtrosStatus: { value: StatusFiltro; label: string }[] = [
+  { value: 'todos', label: 'Todos' },
+  { value: 'pendente', label: 'Pendentes' },
+  { value: 'confirmado', label: 'Confirmados' },
+  { value: 'concluido', label: 'Concluídos' },
+  { value: 'cancelado', label: 'Cancelados' },
+];
+
 const Agenda = () => {
   const { slug } = useParams<{ slug: string }>();
   const [data, setData] = useState(new Date().toISOString().split('T')[0]);
+  const [statusFiltro, setStatusFiltro] = useState<StatusFiltro>('todos');
   const [agendamentos, setAgendamentos] = useState<Agendamento[]>(mockAgendamentos);
 
-  const agendamentosFiltrados = agendamentos.filter(ag => ag.data === data);
+  const agendamentosFiltrados = agendamentos.filter(ag => {
+    const matchData = ag.data === data;
+    const matchStatus = statusFiltro === 'todos' || ag.status === statusFiltro;
+    return matchData && matchStatus;
+  });
 
   const updateStatus = (id: string, novoStatus: Agendamento['status']) => {
     setAgendamentos(prev => prev.map(ag => 
       ag.id === id ? { ...ag, status: novoStatus } : ag
     ));
+  };
+
+  // Contagem por status
+  const contagens = {
+    todos: agendamentos.filter(ag => ag.data === data).length,
+    pendente: agendamentos.filter(ag => ag.data === data && ag.status === 'pendente').length,
+    confirmado: agendamentos.filter(ag => ag.data === data && ag.status === 'confirmado').length,
+    concluido: agendamentos.filter(ag => ag.data === data && ag.status === 'concluido').length,
+    cancelado: agendamentos.filter(ag => ag.data === data && ag.status === 'cancelado').length,
   };
 
   return (
@@ -54,6 +78,41 @@ const Agenda = () => {
           </div>
         </motion.div>
 
+        {/* Filtros de Status */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="flex flex-wrap gap-2 mb-6"
+        >
+          <div className="flex items-center gap-2 mr-4">
+            <Filter className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Filtrar:</span>
+          </div>
+          {filtrosStatus.map((filtro) => (
+            <button
+              key={filtro.value}
+              onClick={() => setStatusFiltro(filtro.value)}
+              className={cn(
+                "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center gap-2",
+                statusFiltro === filtro.value
+                  ? "bg-primary text-primary-foreground shadow-neon"
+                  : "bg-muted/50 text-muted-foreground hover:bg-muted"
+              )}
+            >
+              {filtro.label}
+              <span className={cn(
+                "px-2 py-0.5 rounded-full text-xs",
+                statusFiltro === filtro.value
+                  ? "bg-primary-foreground/20 text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
+              )}>
+                {contagens[filtro.value]}
+              </span>
+            </button>
+          ))}
+        </motion.div>
+
         {/* Timeline */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -73,7 +132,12 @@ const Agenda = () => {
           {agendamentosFiltrados.length === 0 ? (
             <div className="text-center py-12">
               <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Nenhum agendamento para esta data</p>
+              <p className="text-muted-foreground">
+                {statusFiltro === 'todos' 
+                  ? 'Nenhum agendamento para esta data'
+                  : `Nenhum agendamento ${filtrosStatus.find(f => f.value === statusFiltro)?.label.toLowerCase()} para esta data`
+                }
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -87,7 +151,7 @@ const Agenda = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="flex items-center gap-6 p-4 rounded-xl bg-muted/30 border border-border/50 hover:border-primary/30 transition-all"
+                    className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6 p-4 rounded-xl bg-muted/30 border border-border/50 hover:border-primary/30 transition-all"
                   >
                     {/* Hora */}
                     <div className="w-20 h-20 rounded-xl bg-primary/10 flex flex-col items-center justify-center shadow-neon shrink-0">
@@ -111,7 +175,7 @@ const Agenda = () => {
 
                     {/* Status */}
                     <div className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium",
+                      "flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium shrink-0",
                       status.className
                     )}>
                       <StatusIcon className="w-4 h-4" />
@@ -119,7 +183,7 @@ const Agenda = () => {
                     </div>
 
                     {/* Ações */}
-                    <div className="flex gap-2 shrink-0">
+                    <div className="flex flex-wrap gap-2 shrink-0">
                       {ag.status === 'pendente' && (
                         <>
                           <Button
@@ -141,13 +205,36 @@ const Agenda = () => {
                         </>
                       )}
                       {ag.status === 'confirmado' && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateStatus(ag.id, 'concluido')}
+                            className="text-primary border-primary/30 hover:bg-primary/10"
+                          >
+                            Concluir
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateStatus(ag.id, 'cancelado')}
+                            className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                          >
+                            Cancelar
+                          </Button>
+                        </>
+                      )}
+                      {ag.status === 'concluido' && (
+                        <span className="text-sm text-muted-foreground italic">Atendimento finalizado</span>
+                      )}
+                      {ag.status === 'cancelado' && (
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => updateStatus(ag.id, 'concluido')}
-                          className="text-primary border-primary/30 hover:bg-primary/10"
+                          onClick={() => updateStatus(ag.id, 'pendente')}
+                          className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
                         >
-                          Concluir
+                          Reabrir
                         </Button>
                       )}
                     </div>
