@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
-import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, Filter } from 'lucide-react';
+import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, Filter, Loader2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { mockAgendamentos } from '@/data/mockData';
+import { useBarbeariaBySlug } from '@/hooks/useBarbearia';
+import { useAgendamentos, useUpdateAgendamentoStatus, Agendamento } from '@/hooks/useAgendamentos';
 import { cn } from '@/lib/utils';
-import { Agendamento } from '@/types/barbershop';
 
 type StatusFiltro = 'todos' | 'pendente' | 'confirmado' | 'concluido' | 'cancelado';
 
@@ -30,27 +30,27 @@ const Agenda = () => {
   const { slug } = useParams<{ slug: string }>();
   const [data, setData] = useState(new Date().toISOString().split('T')[0]);
   const [statusFiltro, setStatusFiltro] = useState<StatusFiltro>('todos');
-  const [agendamentos, setAgendamentos] = useState<Agendamento[]>(mockAgendamentos);
+
+  const { data: barbearia } = useBarbeariaBySlug(slug);
+  const { data: agendamentos = [], isLoading } = useAgendamentos(barbearia?.id, data);
+  const updateStatus = useUpdateAgendamentoStatus();
 
   const agendamentosFiltrados = agendamentos.filter(ag => {
-    const matchData = ag.data === data;
-    const matchStatus = statusFiltro === 'todos' || ag.status === statusFiltro;
-    return matchData && matchStatus;
+    return statusFiltro === 'todos' || ag.status === statusFiltro;
   });
 
-  const updateStatus = (id: string, novoStatus: Agendamento['status']) => {
-    setAgendamentos(prev => prev.map(ag => 
-      ag.id === id ? { ...ag, status: novoStatus } : ag
-    ));
+  const handleUpdateStatus = (id: string, novoStatus: Agendamento['status']) => {
+    if (!barbearia?.id) return;
+    updateStatus.mutate({ id, status: novoStatus, barbeariaId: barbearia.id });
   };
 
   // Contagem por status
   const contagens = {
-    todos: agendamentos.filter(ag => ag.data === data).length,
-    pendente: agendamentos.filter(ag => ag.data === data && ag.status === 'pendente').length,
-    confirmado: agendamentos.filter(ag => ag.data === data && ag.status === 'confirmado').length,
-    concluido: agendamentos.filter(ag => ag.data === data && ag.status === 'concluido').length,
-    cancelado: agendamentos.filter(ag => ag.data === data && ag.status === 'cancelado').length,
+    todos: agendamentos.length,
+    pendente: agendamentos.filter(ag => ag.status === 'pendente').length,
+    confirmado: agendamentos.filter(ag => ag.status === 'confirmado').length,
+    concluido: agendamentos.filter(ag => ag.status === 'concluido').length,
+    cancelado: agendamentos.filter(ag => ag.status === 'cancelado').length,
   };
 
   return (
@@ -129,7 +129,11 @@ const Agenda = () => {
             </span>
           </div>
 
-          {agendamentosFiltrados.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            </div>
+          ) : agendamentosFiltrados.length === 0 ? (
             <div className="text-center py-12">
               <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
               <p className="text-muted-foreground">
@@ -163,13 +167,13 @@ const Agenda = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <User className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-semibold text-foreground">{ag.clienteNome}</span>
+                        <span className="font-semibold text-foreground">{ag.cliente_nome}</span>
                       </div>
                       <p className="text-muted-foreground text-sm">
-                        {ag.servicoNome} • {ag.barbeiroNome}
+                        {ag.servico?.nome || 'Serviço'} • {ag.barbeiro?.nome || 'Barbeiro'}
                       </p>
                       <p className="text-lg font-display font-bold neon-text mt-1">
-                        R$ {ag.valorTotal.toFixed(2)}
+                        R$ {Number(ag.valor_total).toFixed(2)}
                       </p>
                     </div>
 
@@ -189,7 +193,8 @@ const Agenda = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => updateStatus(ag.id, 'confirmado')}
+                            onClick={() => handleUpdateStatus(ag.id, 'confirmado')}
+                            disabled={updateStatus.isPending}
                             className="text-neon-green border-neon-green/30 hover:bg-neon-green/10"
                           >
                             Confirmar
@@ -197,7 +202,8 @@ const Agenda = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => updateStatus(ag.id, 'cancelado')}
+                            onClick={() => handleUpdateStatus(ag.id, 'cancelado')}
+                            disabled={updateStatus.isPending}
                             className="text-destructive border-destructive/30 hover:bg-destructive/10"
                           >
                             Cancelar
@@ -209,7 +215,8 @@ const Agenda = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => updateStatus(ag.id, 'concluido')}
+                            onClick={() => handleUpdateStatus(ag.id, 'concluido')}
+                            disabled={updateStatus.isPending}
                             className="text-primary border-primary/30 hover:bg-primary/10"
                           >
                             Concluir
@@ -217,7 +224,8 @@ const Agenda = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => updateStatus(ag.id, 'cancelado')}
+                            onClick={() => handleUpdateStatus(ag.id, 'cancelado')}
+                            disabled={updateStatus.isPending}
                             className="text-destructive border-destructive/30 hover:bg-destructive/10"
                           >
                             Cancelar
@@ -231,7 +239,8 @@ const Agenda = () => {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => updateStatus(ag.id, 'pendente')}
+                          onClick={() => handleUpdateStatus(ag.id, 'pendente')}
+                          disabled={updateStatus.isPending}
                           className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
                         >
                           Reabrir
