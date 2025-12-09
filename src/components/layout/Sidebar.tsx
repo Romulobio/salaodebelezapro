@@ -9,7 +9,8 @@ import {
   Store,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  DollarSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -34,6 +35,7 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
     { href: `/admin/${barbeariaSlug}/servicos`, icon: Scissors, label: 'Serviços' },
     { href: `/admin/${barbeariaSlug}/barbeiros`, icon: Users, label: 'Barbeiros' },
     { href: `/admin/${barbeariaSlug}/agenda`, icon: Calendar, label: 'Agenda' },
+    { href: `/admin/${barbeariaSlug}/financeiro`, icon: DollarSign, label: 'Financeiro' },
     { href: `/admin/${barbeariaSlug}/configuracoes`, icon: Settings, label: 'Configurações' },
   ];
 
