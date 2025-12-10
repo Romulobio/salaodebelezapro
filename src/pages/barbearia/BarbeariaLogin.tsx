@@ -1,34 +1,52 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { Scissors, Mail, Lock, ArrowRight } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Scissors, Lock, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-const Login = () => {
+const BarbeariaLogin = () => {
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!slug) {
+      toast.error('Barbearia não encontrada');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password: senha,
+      const { data, error } = await supabase.functions.invoke('barbearia-auth', {
+        body: { action: 'login', slug, password: senha }
       });
 
       if (error) throw error;
 
+      if (!data.success) {
+        toast.error(data.error || 'Erro ao fazer login');
+        return;
+      }
+
+      // Store session in sessionStorage
+      sessionStorage.setItem('barbearia_session', JSON.stringify({
+        ...data.barbearia,
+        token: data.session_token,
+        timestamp: Date.now()
+      }));
+
       toast.success('Login realizado com sucesso!');
-      navigate('/manager');
+      navigate(`/admin/${slug}`);
     } catch (error: any) {
-      toast.error(error.message || 'Erro na autenticação');
+      console.error('Login error:', error);
+      toast.error(error.message || 'Erro ao fazer login');
     } finally {
       setLoading(false);
     }
@@ -49,35 +67,20 @@ const Login = () => {
       >
         <div className="neon-card p-8">
           <div className="text-center mb-8">
-            <Link to="/" className="inline-flex items-center gap-2 mb-6">
+            <div className="inline-flex items-center gap-2 mb-6">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center shadow-neon">
                 <Scissors className="w-6 h-6 text-background" />
               </div>
-            </Link>
+            </div>
             <h1 className="text-3xl font-display font-bold neon-text mb-2">
-              Painel do Desenvolvedor
+              Acesso Admin
             </h1>
             <p className="text-muted-foreground">
-              Acesso restrito ao administrador do sistema
+              Entre com a senha da sua barbearia
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Email</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-12"
-                  required
-                />
-              </div>
-            </div>
-
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Senha</label>
               <div className="relative">
@@ -89,7 +92,7 @@ const Login = () => {
                   onChange={(e) => setSenha(e.target.value)}
                   className="pl-12"
                   required
-                  minLength={6}
+                  minLength={4}
                 />
               </div>
             </div>
@@ -111,4 +114,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default BarbeariaLogin;

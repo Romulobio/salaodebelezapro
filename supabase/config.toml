@@ -1,1 +1,4 @@
 project_id = "qtfpuxvemyasmvuaszwi"
+
+[functions.barbearia-auth]
+verify_jwt = false
