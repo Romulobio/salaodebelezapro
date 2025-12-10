@@ -103,6 +103,7 @@ export type Database = {
           plano_tipo: string
           plano_valor: number
           proprietario_nome: string
+          senha_hash: string | null
           slug: string
           telefone: string | null
           updated_at: string
@@ -118,6 +119,7 @@ export type Database = {
           plano_tipo?: string
           plano_valor?: number
           proprietario_nome: string
+          senha_hash?: string | null
           slug: string
           telefone?: string | null
           updated_at?: string
@@ -133,6 +135,7 @@ export type Database = {
           plano_tipo?: string
           plano_valor?: number
           proprietario_nome?: string
+          senha_hash?: string | null
           slug?: string
           telefone?: string | null
           updated_at?: string
@@ -279,7 +282,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_barbearia_by_slug: {
+        Args: { p_slug: string }
+        Returns: {
+          id: string
+          nome: string
+          senha_hash: string
+          slug: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

@@ -13,12 +13,16 @@ import Login from "./pages/auth/Login";
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import NovaBarbearia from "./pages/manager/NovaBarbearia";
 
+// Barbearia Login
+import BarbeariaLogin from "./pages/barbearia/BarbeariaLogin";
+
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import Servicos from "./pages/admin/Servicos";
 import Barbeiros from "./pages/admin/Barbeiros";
 import Financeiro from "./pages/admin/Financeiro";
 import Agenda from "./pages/admin/Agenda";
+import Configuracoes from "./pages/admin/Configuracoes";
 
 // Booking Pages
 import AgendarServico from "./pages/booking/AgendarServico";
@@ -41,10 +45,13 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/auth/login" element={<Login />} />
 
-          {/* Manager Panel */}
+          {/* Manager Panel (Developer) */}
           <Route path="/manager" element={<ManagerDashboard />} />
           <Route path="/manager/barbearias" element={<ManagerDashboard />} />
           <Route path="/manager/barbearias/nova" element={<NovaBarbearia />} />
+
+          {/* Barbearia Login */}
+          <Route path="/barbearia/:slug/login" element={<BarbeariaLogin />} />
 
           {/* Admin Panel */}
           <Route path="/admin/:slug" element={<AdminDashboard />} />
@@ -52,6 +59,7 @@ const App = () => (
           <Route path="/admin/:slug/barbeiros" element={<Barbeiros />} />
           <Route path="/admin/:slug/financeiro" element={<Financeiro />} />
           <Route path="/admin/:slug/agenda" element={<Agenda />} />
+          <Route path="/admin/:slug/configuracoes" element={<Configuracoes />} />
 
           {/* Booking Flow */}
           <Route path="/agendar/:slug" element={<AgendarServico />} />

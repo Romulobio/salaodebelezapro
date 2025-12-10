@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Store, User, Mail, Phone, MapPin, FileText, CreditCard } from 'lucide-react';
+import { ArrowLeft, Store, User, Mail, Phone, MapPin, FileText, CreditCard, Lock, Copy, Check } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const NovaBarbearia = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [createdSlug, setCreatedSlug] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({
     barbeariaNome: '',
     proprietarioNome: '',
@@ -29,25 +32,142 @@ const NovaBarbearia = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (form.senha.length < 4) {
+      toast.error('A senha deve ter no mínimo 4 caracteres');
+      return;
+    }
+
     setLoading(true);
 
-    // Simulação - substituir por integração real
-    setTimeout(() => {
-      const slug = form.barbeariaNome.toLowerCase().replace(/\s+/g, '-');
-      toast.success(
-        <div>
-          <p className="font-semibold">Barbearia criada com sucesso!</p>
-          <p className="text-sm mt-1">Link: /admin/{slug}</p>
-        </div>
-      );
-      navigate('/manager');
+    try {
+      // Hash the password
+      const { data: hashData, error: hashError } = await supabase.functions.invoke('barbearia-auth', {
+        body: { action: 'hash', password: form.senha }
+      });
+
+      if (hashError) throw hashError;
+
+      const slug = form.barbeariaNome
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+      const plano = planos.find(p => p.id === form.planoTipo);
+
+      // Insert barbearia
+      const { error: insertError } = await supabase
+        .from('barbearias')
+        .insert({
+          nome: form.barbeariaNome,
+          proprietario_nome: form.proprietarioNome,
+          email: form.email,
+          telefone: form.telefone || null,
+          endereco: form.endereco || null,
+          descricao: form.descricao || null,
+          slug,
+          plano_tipo: form.planoTipo,
+          plano_valor: plano?.valor || 0,
+          senha_hash: hashData.hash,
+        });
+
+      if (insertError) throw insertError;
+
+      setCreatedSlug(slug);
+      toast.success('Barbearia criada com sucesso!');
+    } catch (error: any) {
+      console.error('Error creating barbearia:', error);
+      toast.error(error.message || 'Erro ao criar barbearia');
+    } finally {
       setLoading(false);
-    }, 1500);
+    }
   };
 
   const updateForm = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
   };
+
+  const handleCopyLink = () => {
+    if (createdSlug) {
+      navigator.clipboard.writeText(`${window.location.origin}/barbearia/${createdSlug}/login`);
+      setCopied(true);
+      toast.success('Link copiado!');
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  if (createdSlug) {
+    const adminLink = `${window.location.origin}/barbearia/${createdSlug}/login`;
+    const bookingLink = `${window.location.origin}/agendar/${createdSlug}`;
+
+    return (
+      <DashboardLayout type="manager">
+        <div className="p-8 max-w-2xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="neon-card text-center"
+          >
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center mx-auto mb-6 shadow-neon">
+              <Check className="w-8 h-8 text-background" />
+            </div>
+            <h1 className="text-3xl font-display font-bold neon-text mb-2">Barbearia Criada!</h1>
+            <p className="text-muted-foreground mb-8">
+              A barbearia foi cadastrada com sucesso. Compartilhe os links abaixo.
+            </p>
+
+            <div className="space-y-4 text-left">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Link de Acesso Admin (para a barbearia)</label>
+                <div className="flex gap-2">
+                  <Input value={adminLink} readOnly className="bg-muted/50" />
+                  <Button variant="outline" size="icon" onClick={handleCopyLink}>
+                    {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Link de Agendamento (para clientes)</label>
+                <div className="flex gap-2">
+                  <Input value={bookingLink} readOnly className="bg-muted/50" />
+                  <Button variant="outline" size="icon" onClick={() => {
+                    navigator.clipboard.writeText(bookingLink);
+                    toast.success('Link copiado!');
+                  }}>
+                    <Copy className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex gap-4 justify-center">
+              <Button variant="outline" onClick={() => navigate('/manager')}>
+                Voltar ao Dashboard
+              </Button>
+              <Button variant="neon" onClick={() => {
+                setCreatedSlug(null);
+                setForm({
+                  barbeariaNome: '',
+                  proprietarioNome: '',
+                  email: '',
+                  senha: '',
+                  telefone: '',
+                  endereco: '',
+                  descricao: '',
+                  planoTipo: 'profissional',
+                });
+              }}>
+                Cadastrar Outra
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout type="manager">
@@ -116,13 +236,19 @@ const NovaBarbearia = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Senha de Acesso *</label>
-                <Input
-                  type="password"
-                  placeholder="••••••••"
-                  value={form.senha}
-                  onChange={(e) => updateForm('senha', e.target.value)}
-                  required
-                />
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    type="password"
+                    placeholder="••••••••"
+                    value={form.senha}
+                    onChange={(e) => updateForm('senha', e.target.value)}
+                    className="pl-12"
+                    required
+                    minLength={4}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">Mínimo 4 caracteres. Essa será a senha de acesso ao painel da barbearia.</p>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Telefone</label>
