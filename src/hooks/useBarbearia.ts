@@ -14,6 +14,7 @@ export interface Barbearia {
   descricao?: string;
   slug: string;
   logo_url?: string;
+  ativo?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -71,6 +72,53 @@ export const useCreateBarbearia = () => {
     },
     onError: (error) => {
       toast.error('Erro ao criar barbearia: ' + error.message);
+    },
+  });
+};
+
+export const useUpdateBarbearia = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<Barbearia> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('barbearias')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['barbearias'] });
+      toast.success('Barbearia atualizada com sucesso!');
+    },
+    onError: (error) => {
+      toast.error('Erro ao atualizar barbearia: ' + error.message);
+    },
+  });
+};
+
+export const useDeleteBarbearia = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('barbearias')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['barbearias'] });
+      toast.success('Barbearia excluída com sucesso!');
+    },
+    onError: (error) => {
+      toast.error('Erro ao excluir barbearia: ' + error.message);
     },
   });
 };

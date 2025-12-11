@@ -27,6 +27,7 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
   const managerLinks = [
     { href: '/manager', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/manager/barbearias', icon: Store, label: 'Barbearias' },
+    { href: '/manager/financeiro', icon: DollarSign, label: 'Financeiro' },
     { href: '/manager/configuracoes', icon: Settings, label: 'Configurações' },
   ];
 

@@ -11,6 +11,7 @@ import Login from "./pages/auth/Login";
 
 // Manager Pages
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
+import ManagerFinanceiro from "./pages/manager/ManagerFinanceiro";
 import NovaBarbearia from "./pages/manager/NovaBarbearia";
 
 // Barbearia Login
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/manager" element={<ManagerDashboard />} />
           <Route path="/manager/barbearias" element={<ManagerDashboard />} />
           <Route path="/manager/barbearias/nova" element={<NovaBarbearia />} />
+          <Route path="/manager/financeiro" element={<ManagerFinanceiro />} />
 
           {/* Barbearia Login */}
           <Route path="/barbearia/:slug/login" element={<BarbeariaLogin />} />
