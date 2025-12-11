@@ -5,14 +5,43 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { StatCard } from '@/components/cards/StatCard';
 import { BarbeariaCard } from '@/components/cards/BarbeariaCard';
 import { Button } from '@/components/ui/button';
-import { mockBarbearias } from '@/data/mockData';
+import { useBarbearias } from '@/hooks/useBarbearia';
 
 const ManagerDashboard = () => {
+  const { data: barbearias, isLoading } = useBarbearias();
+
+  const barbeariasAtivas = barbearias?.filter(b => b.ativo !== false) || [];
+  const receitaMensal = barbeariasAtivas.reduce((acc, b) => acc + (b.plano_valor || 0), 0);
+
   const stats = [
-    { title: 'Total Barbearias', value: mockBarbearias.length, icon: Store, variant: 'default' as const, trend: { value: 12, isPositive: true } },
-    { title: 'Clientes Ativos', value: '1.248', icon: Users, variant: 'purple' as const, trend: { value: 8, isPositive: true } },
-    { title: 'Receita Total', value: 'R$ 24.580', icon: DollarSign, variant: 'green' as const, trend: { value: 15, isPositive: true } },
-    { title: 'Taxa de Crescimento', value: '+23%', icon: TrendingUp, variant: 'pink' as const, trend: { value: 5, isPositive: true } },
+    { 
+      title: 'Total Barbearias', 
+      value: (barbearias?.length || 0).toString(), 
+      icon: Store, 
+      variant: 'default' as const, 
+      trend: { value: 12, isPositive: true } 
+    },
+    { 
+      title: 'Barbearias Ativas', 
+      value: barbeariasAtivas.length.toString(), 
+      icon: Users, 
+      variant: 'purple' as const, 
+      trend: { value: 8, isPositive: true } 
+    },
+    { 
+      title: 'Receita Mensal', 
+      value: `R$ ${receitaMensal.toFixed(2)}`, 
+      icon: DollarSign, 
+      variant: 'green' as const, 
+      trend: { value: 15, isPositive: true } 
+    },
+    { 
+      title: 'Taxa de Crescimento', 
+      value: '+23%', 
+      icon: TrendingUp, 
+      variant: 'pink' as const, 
+      trend: { value: 5, isPositive: true } 
+    },
   ];
 
   return (
@@ -55,11 +84,25 @@ const ManagerDashboard = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {mockBarbearias.map((barbearia, index) => (
-              <BarbeariaCard key={barbearia.id} barbearia={barbearia} index={index} />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+            </div>
+          ) : barbearias && barbearias.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {barbearias.slice(0, 6).map((barbearia, index) => (
+                <BarbeariaCard key={barbearia.id} barbearia={barbearia} index={index} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <Store className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <p>Nenhuma barbearia cadastrada ainda.</p>
+              <Button variant="outline" className="mt-4" asChild>
+                <Link to="/manager/barbearias/nova">Cadastrar primeira barbearia</Link>
+              </Button>
+            </div>
+          )}
         </motion.div>
       </div>
     </DashboardLayout>

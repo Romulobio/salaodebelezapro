@@ -93,6 +93,7 @@ export type Database = {
       }
       barbearias: {
         Row: {
+          ativo: boolean
           created_at: string
           descricao: string | null
           email: string
@@ -109,6 +110,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          ativo?: boolean
           created_at?: string
           descricao?: string | null
           email: string
@@ -125,6 +127,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          ativo?: boolean
           created_at?: string
           descricao?: string | null
           email?: string
