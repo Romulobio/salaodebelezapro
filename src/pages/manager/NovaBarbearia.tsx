@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Store, User, Mail, Phone, MapPin, FileText, CreditCard, Lock, Copy, Check } from 'lucide-react';
+import { ArrowLeft, Store, User, Mail, Phone, MapPin, FileText, CreditCard, Lock, Copy, Check, Pencil } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,11 +24,17 @@ const NovaBarbearia = () => {
     planoTipo: 'profissional',
   });
 
-  const planos = [
+  const [planos, setPlanos] = useState([
     { id: 'basico', nome: 'Básico', valor: 79.90, recursos: ['1 barbeiro', 'Agenda básica', 'Suporte email'] },
     { id: 'profissional', nome: 'Profissional', valor: 129.90, recursos: ['5 barbeiros', 'Agenda completa', 'Relatórios', 'Suporte prioritário'] },
     { id: 'premium', nome: 'Premium', valor: 199.90, recursos: ['Ilimitado', 'Todas funções', 'PIX integrado', 'Suporte 24/7', 'API acesso'] },
-  ];
+  ]);
+
+  const updatePlanoValor = (planoId: string, novoValor: number) => {
+    setPlanos(prev => prev.map(p => 
+      p.id === planoId ? { ...p, valor: novoValor } : p
+    ));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -302,30 +308,53 @@ const NovaBarbearia = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {planos.map((plano) => (
-                <button
+                <div
                   key={plano.id}
-                  type="button"
-                  onClick={() => updateForm('planoTipo', plano.id)}
                   className={`p-5 rounded-xl border-2 text-left transition-all ${
                     form.planoTipo === plano.id
                       ? 'border-primary bg-primary/10 shadow-neon'
                       : 'border-border/50 hover:border-primary/50'
                   }`}
                 >
-                  <h3 className="font-display font-semibold text-lg">{plano.nome}</h3>
-                  <p className="text-3xl font-bold neon-text mt-2">
-                    R$ {plano.valor.toFixed(2)}
-                    <span className="text-sm text-muted-foreground font-normal">/mês</span>
-                  </p>
-                  <ul className="mt-4 space-y-2">
-                    {plano.recursos.map((recurso) => (
-                      <li key={recurso} className="text-sm text-muted-foreground flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan" />
-                        {recurso}
-                      </li>
-                    ))}
-                  </ul>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => updateForm('planoTipo', plano.id)}
+                    className="w-full text-left"
+                  >
+                    <h3 className="font-display font-semibold text-lg">{plano.nome}</h3>
+                  </button>
+                  <div className="mt-2">
+                    <label className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Pencil className="w-3 h-3" /> Valor mensal
+                    </label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-muted-foreground">R$</span>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={plano.valor}
+                        onChange={(e) => updatePlanoValor(plano.id, parseFloat(e.target.value) || 0)}
+                        className="w-28 text-xl font-bold"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => updateForm('planoTipo', plano.id)}
+                    className="w-full text-left"
+                  >
+                    <ul className="mt-4 space-y-2">
+                      {plano.recursos.map((recurso) => (
+                        <li key={recurso} className="text-sm text-muted-foreground flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan" />
+                          {recurso}
+                        </li>
+                      ))}
+                    </ul>
+                  </button>
+                </div>
               ))}
             </div>
           </motion.div>
