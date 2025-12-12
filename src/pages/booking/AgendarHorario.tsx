@@ -1,17 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Clock, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Clock, ArrowRight, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { horariosDisponiveis } from '@/data/mockData';
+import { useHorariosDisponiveis } from '@/hooks/useHorariosDisponiveis';
+
+const HORARIOS_BASE = [
+  '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', 
+  '11:00', '11:30', '14:00', '14:30', '15:00', '15:30',
+  '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
+];
 
 const AgendarHorario = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [horarioSelecionado, setHorarioSelecionado] = useState<string | null>(null);
 
-  // Simular alguns horários ocupados
-  const horariosOcupados = ['09:00', '10:30', '15:00'];
+  // Recuperar dados do localStorage
+  const barbeiroId = localStorage.getItem('agendamento.barbeiro');
+  const dataSelecionada = localStorage.getItem('agendamento.data');
+
+  const { data: horariosData, isLoading } = useHorariosDisponiveis({
+    barbeariaSlug: slug,
+    barbeiroId: barbeiroId || undefined,
+    data: dataSelecionada || undefined,
+  });
+
+  const horariosOcupados = horariosData?.ocupados || [];
 
   const handleContinuar = () => {
     if (horarioSelecionado) {
@@ -19,6 +34,21 @@ const AgendarHorario = () => {
       navigate(`/agendar/${slug}/pagamento`);
     }
   };
+
+  // Verificar se os dados anteriores existem
+  useEffect(() => {
+    if (!barbeiroId || !dataSelecionada) {
+      navigate(`/agendar/${slug}`);
+    }
+  }, [barbeiroId, dataSelecionada, navigate, slug]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-12 px-6">
@@ -66,7 +96,7 @@ const AgendarHorario = () => {
           </div>
 
           <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
-            {horariosDisponiveis.map((horario, index) => {
+            {HORARIOS_BASE.map((horario, index) => {
               const isOcupado = horariosOcupados.includes(horario);
               const isSelected = horarioSelecionado === horario;
 
