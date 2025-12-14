@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 import { Settings, Lock, Save, Copy, ExternalLink, Clock, Loader2 } from 'lucide-react';
