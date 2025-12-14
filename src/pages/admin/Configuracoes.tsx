@@ -16,6 +16,69 @@ const Configuracoes = () => {
   const [loading, setLoading] = useState(false);
   const [barbeariaId, setBarbeariaId] = useState<string | null>(null);
 
+  // Estados da Agenda
+  const [diaConfig, setDiaConfig] = useState<string[]>(['seg', 'ter', 'qua', 'qui', 'sex', 'sab']);
+  const [horarioInicio, setHorarioInicio] = useState('09:00');
+  const [horarioFim, setHorarioFim] = useState('19:00');
+  const [intervalo, setIntervalo] = useState('30');
+
+  useEffect(() => {
+    if (barbeariaId) {
+      loadAgendaConfig();
+    }
+  }, [barbeariaId]);
+
+  const loadAgendaConfig = async () => {
+    // @ts-ignore
+    const { data } = await supabase
+      .from('agenda_config')
+      .select('*')
+      .eq('barbearia_id', barbeariaId)
+      .maybeSingle();
+
+    if (data) {
+      setDiaConfig((data.dias_funcionamento as string[]) || []);
+      setHorarioInicio(data.horario_inicio || '09:00');
+      setHorarioFim(data.horario_fim || '19:00');
+      setIntervalo(data.intervalo_minutos?.toString() || '30');
+    }
+  };
+
+  const handleSaveAgenda = async () => {
+    if (!barbeariaId) return;
+    setLoading(true);
+
+    const payload = {
+      barbearia_id: barbeariaId,
+      dias_funcionamento: diaConfig,
+      horario_inicio: horarioInicio,
+      horario_fim: horarioFim,
+      intervalo_minutos: parseInt(intervalo),
+    };
+
+    // Upsert (Insert or Update)
+    // @ts-ignore
+    const { error } = await supabase
+      .from('agenda_config')
+      .upsert(payload, { onConflict: 'barbearia_id' });
+
+    setLoading(false);
+    if (error) {
+      toast.error('Erro ao salvar configuração da agenda');
+      console.error(error);
+    } else {
+      toast.success('Horários configurados com sucesso!');
+    }
+  };
+
+  const toggleDia = (dia: string) => {
+    if (diaConfig.includes(dia)) {
+      setDiaConfig(prev => prev.filter(d => d !== dia));
+    } else {
+      setDiaConfig(prev => [...prev, dia]);
+    }
+  };
+
   const bookingLink = `${window.location.origin}/agendar/${slug}`;
   const adminLink = `${window.location.origin}/barbearia/${slug}/login`;
 
@@ -265,37 +328,86 @@ const Configuracoes = () => {
             </Card>
           </motion.div>
 
-          {/* Configuração de Horários (Mock Visual) */}
+          {/* Configuração de Horários (Real) */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="neon-card opacity-80">
+            <Card className="neon-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <div className="w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center">
-                    <div className="w-0.5 h-2 bg-primary" />
+                    <Clock className="w-3 h-3 text-primary" />
                   </div>
-                  Horários de Funcionamento (Em Breve)
+                  Horários de Funcionamento
                 </CardTitle>
                 <CardDescription>
-                  Defina os horários disponíveis para agendamento
+                  Defina os dias, horários e duração média dos cortes
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'].map(h => (
-                      <div key={h} className="flex items-center gap-2 p-2 rounded border border-border/50 bg-muted/20">
-                        <input type="checkbox" defaultChecked className="accent-neon-cyan" />
-                        <span className="text-sm font-mono">{h}</span>
-                      </div>
-                    ))}
+                <div className="space-y-6">
+                  {/* Horários e Intervalo */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Horário Início</label>
+                      <Input
+                        type="time"
+                        value={horarioInicio}
+                        onChange={(e) => setHorarioInicio(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Horário Fim</label>
+                      <Input
+                        type="time"
+                        value={horarioFim}
+                        onChange={(e) => setHorarioFim(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Intervalo (min)</label>
+                      <Input
+                        type="number"
+                        min="15"
+                        step="15"
+                        value={intervalo}
+                        onChange={(e) => setIntervalo(e.target.value)}
+                      />
+                    </div>
                   </div>
-                  <p className="text-xs text-yellow-500 flex items-center gap-1">
-                    Isso é uma prévia. A funcionalidade completa requer atualização de banco de dados.
-                  </p>
+
+                  {/* Dias da Semana */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Dias de Funcionamento</label>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { id: 'seg', label: 'Seg' },
+                        { id: 'ter', label: 'Ter' },
+                        { id: 'qua', label: 'Qua' },
+                        { id: 'qui', label: 'Qui' },
+                        { id: 'sex', label: 'Sex' },
+                        { id: 'sab', label: 'Sáb' },
+                        { id: 'dom', label: 'Dom' }
+                      ].map((dia) => (
+                        <button
+                          key={dia.id}
+                          onClick={() => toggleDia(dia.id)}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${diaConfig.includes(dia.id)
+                            ? 'bg-primary text-primary-foreground shadow-neon'
+                            : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                            }`}
+                        >
+                          {dia.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <Button onClick={handleSaveAgenda} disabled={loading} variant="neon" className="w-full sm:w-auto">
+                    {loading ? <div className="animate-spin w-4 h-4 rounded-full border-2 border-background border-t-transparent" /> : 'Salvar Horários'}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
