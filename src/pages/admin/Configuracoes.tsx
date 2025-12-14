@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
-import { Settings, Lock, Save, Copy, ExternalLink, Clock } from 'lucide-react';
+import { Settings, Lock, Save, Copy, ExternalLink, Clock, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +24,7 @@ const Configuracoes = () => {
 
   // Estado do PIX
   const [pixKey, setPixKey] = useState('');
+  const [pixQrCode, setPixQrCode] = useState('');
 
   useEffect(() => {
     if (barbeariaId) {
@@ -47,6 +48,8 @@ const Configuracoes = () => {
       setHorarioInicio(data.horario_inicio || '09:00');
       setHorarioFim(data.horario_fim || '19:00');
       setIntervalo(data.intervalo_minutos?.toString() || '30');
+      setPixKey(data.pix_chave || '');
+      setPixQrCode(data.pix_qrcode_base64 || '');
     }
   };
 
@@ -60,6 +63,8 @@ const Configuracoes = () => {
       horario_inicio: horarioInicio,
       horario_fim: horarioFim,
       intervalo_minutos: parseInt(intervalo),
+      pix_chave: pixKey,
+      pix_qrcode_base64: pixQrCode
     };
 
     // Upsert (Insert or Update)
