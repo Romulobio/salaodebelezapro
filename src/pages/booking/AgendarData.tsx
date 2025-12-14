@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Calendar, ArrowRight, ArrowLeft, CheckCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAgendaConfig } from '@/hooks/useAgendaConfig';
 
 const AgendarData = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [dataSelecionada, setDataSelecionada] = useState<string | null>(null);
+
+  const { data: config, isLoading } = useAgendaConfig(slug);
 
   // Gerar próximos 14 dias
   const proximosDias = Array.from({ length: 14 }, (_, i) => {
@@ -25,12 +28,25 @@ const AgendarData = () => {
     return date.toISOString().split('T')[0];
   };
 
+  const getDiaSlug = (date: Date) => {
+    const map = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+    return map[date.getDay()];
+  };
+
   const handleContinuar = () => {
     if (dataSelecionada) {
       localStorage.setItem('agendamento.data', dataSelecionada);
       navigate(`/agendar/${slug}/horario`);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background py-12 px-6">
@@ -54,9 +70,8 @@ const AgendarData = () => {
           <div className="flex items-center justify-center gap-2 mt-8">
             {['Serviço', 'Barbeiro', 'Data', 'Horário', 'Pagamento'].map((step, i) => (
               <div key={step} className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                  i <= 2 ? 'bg-primary text-primary-foreground shadow-neon' : 'bg-muted text-muted-foreground'
-                }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i <= 2 ? 'bg-primary text-primary-foreground shadow-neon' : 'bg-muted text-muted-foreground'
+                  }`}>
                   {i < 2 ? <CheckCircle className="w-4 h-4" /> : i + 1}
                 </div>
                 {i < 4 && <div className={`w-8 h-0.5 ${i < 2 ? 'bg-primary' : 'bg-border'}`} />}
@@ -81,7 +96,12 @@ const AgendarData = () => {
             {proximosDias.map((date, index) => {
               const dataStr = formatarData(date);
               const isSelected = dataSelecionada === dataStr;
-              const isSunday = date.getDay() === 0;
+
+              const diaSlug = getDiaSlug(date);
+              const isFuncionamento = config?.dias_funcionamento.includes(diaSlug);
+
+              // Bloquear dias passados (se houver bug no array) e dias sem funcionamento
+              const isDisabled = !isFuncionamento;
 
               return (
                 <motion.button
@@ -89,15 +109,14 @@ const AgendarData = () => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.03 }}
-                  disabled={isSunday}
+                  disabled={isDisabled}
                   onClick={() => setDataSelecionada(dataStr)}
-                  className={`p-4 rounded-xl flex flex-col items-center transition-all ${
-                    isSunday
-                      ? 'bg-muted/30 text-muted-foreground cursor-not-allowed'
+                  className={`p-4 rounded-xl flex flex-col items-center transition-all ${isDisabled
+                      ? 'bg-muted/30 text-muted-foreground cursor-not-allowed opacity-50'
                       : isSelected
                         ? 'bg-primary/20 border-2 border-primary shadow-neon'
                         : 'bg-muted/50 hover:bg-muted border border-border/50 hover:border-primary/50'
-                  }`}
+                    }`}
                 >
                   <span className="text-xs text-muted-foreground mb-1">
                     {formatarDia(date)}
@@ -117,7 +136,7 @@ const AgendarData = () => {
           </div>
 
           <p className="text-sm text-muted-foreground mt-4 text-center">
-            * Domingos não disponíveis
+            * Dias desabilitados não possuem atendimento
           </p>
         </motion.div>
 

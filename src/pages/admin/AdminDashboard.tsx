@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
-import { Calendar, Users, Scissors, DollarSign, Clock, Loader2 } from 'lucide-react';
+import { Calendar, Users, Scissors, DollarSign, Clock, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { StatCard } from '@/components/cards/StatCard';
+import { Button } from '@/components/ui/button';
 import { useBarbeariaBySlug } from '@/hooks/useBarbearia';
-import { useAgendamentos } from '@/hooks/useAgendamentos';
+import { useAgendamentos, useUpdateAgendamentoStatus } from '@/hooks/useAgendamentos';
 import { useServicosBySlug } from '@/hooks/useServicos';
 
 const AdminDashboard = () => {
@@ -15,6 +16,7 @@ const AdminDashboard = () => {
   const { data: barbearia } = useBarbeariaBySlug(slug);
   const { data: agendamentos = [], isLoading: loadingAgendamentos } = useAgendamentos(barbearia?.id);
   const { data: servicos = [] } = useServicosBySlug(slug);
+  const updateStatus = useUpdateAgendamentoStatus();
 
   // Cálculos Estatísticas
   const stats = useMemo(() => {
@@ -154,9 +156,40 @@ const AdminDashboard = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-muted-foreground">Barbeiro</p>
-                    <p className="font-medium text-foreground">{ag.barbeiro ? ag.barbeiro.nome : 'N/A'}</p>
+
+                  <div className="flex items-center gap-4">
+                    <div className="text-right hidden sm:block">
+                      <p className="text-sm text-muted-foreground">Barbeiro</p>
+                      <p className="font-medium text-foreground">{ag.barbeiro ? ag.barbeiro.nome : 'N/A'}</p>
+                    </div>
+
+                    <div className="flex gap-2">
+                      {ag.status === 'pendente' && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-neon-green hover:text-neon-green hover:bg-neon-green/10 h-8 px-2"
+                          title="Confirmar"
+                          disabled={updateStatus.isPending}
+                          onClick={() => updateStatus.mutate({ id: ag.id, status: 'confirmado', barbeariaId: barbearia!.id })}
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                        </Button>
+                      )}
+
+                      {(ag.status === 'pendente' || ag.status === 'confirmado') && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
+                          title="Cancelar"
+                          disabled={updateStatus.isPending}
+                          onClick={() => updateStatus.mutate({ id: ag.id, status: 'cancelado', barbeariaId: barbearia!.id })}
+                        >
+                          <XCircle className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </motion.div>
               ))
