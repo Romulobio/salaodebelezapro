@@ -27,8 +27,17 @@ const Pagamento = () => {
   const data = localStorage.getItem('agendamento.data');
   const horario = localStorage.getItem('agendamento.horario');
 
-  // Código PIX simulado
-  const codigoPix = '00020126580014br.gov.bcb.pix0136a1b2c3d4-e5f6-7890-abcd-ef1234567890520400005303986540550.005802BR5925BARBEARIA NEON STYLE6009SAO PAULO62140510AGENDAMENTO6304ABCD';
+  // Código PIX (Dinâmico ou Default)
+  const [codigoPix, setCodigoPix] = useState('00020126580014br.gov.bcb.pix0136a1b2c3d4-e5f6-7890-abcd-ef1234567890520400005303986540550.005802BR5925BARBEARIA NEON STYLE6009SAO PAULO62140510AGENDAMENTO6304ABCD');
+
+  useEffect(() => {
+    if (slug) {
+      const savedPix = localStorage.getItem(`pix_key_${slug}`);
+      if (savedPix) {
+        setCodigoPix(savedPix);
+      }
+    }
+  }, [slug]);
 
   const formatarData = (dataStr: string | null) => {
     if (!dataStr) return '';
@@ -253,7 +262,7 @@ const Pagamento = () => {
             <textarea
               readOnly
               value={codigoPix}
-              className="w-full p-4 rounded-lg bg-muted/50 border border-border/50 text-sm text-muted-foreground resize-none h-24"
+              className="w-full p-4 rounded-lg bg-muted/50 border border-border/50 text-sm text-neon-cyan font-mono resize-none h-32 focus:ring-1 focus:ring-neon-cyan"
             />
             <Button
               variant="outline"

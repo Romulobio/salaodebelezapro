@@ -67,12 +67,12 @@ const Agenda = () => {
           </div>
           <div className="flex items-center gap-4">
             <div className="relative">
-              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neon-cyan" />
               <Input
                 type="date"
                 value={data}
                 onChange={(e) => setData(e.target.value)}
-                className="pl-12 w-48"
+                className="pl-12 w-48 bg-background border-neon-cyan/50 text-neon-cyan focus:border-neon-cyan focus:ring-neon-cyan/20 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
               />
             </div>
           </div>
@@ -137,7 +137,7 @@ const Agenda = () => {
             <div className="text-center py-12">
               <Calendar className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
               <p className="text-muted-foreground">
-                {statusFiltro === 'todos' 
+                {statusFiltro === 'todos'
                   ? 'Nenhum agendamento para esta data'
                   : `Nenhum agendamento ${filtrosStatus.find(f => f.value === statusFiltro)?.label.toLowerCase()} para esta data`
                 }

@@ -221,6 +221,85 @@ const Configuracoes = () => {
               </CardContent>
             </Card>
           </motion.div>
+
+          {/* Configuração PIX */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="neon-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-gradient-to-br from-neon-green to-neon-cyan rotate-45 transform scale-75 rounded-sm" />
+                  Configuração PIX
+                </CardTitle>
+                <CardDescription>
+                  Defina o código "Copia e Cola" padrão para os pagamentos
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">Código PIX (Copia e Cola)</label>
+                    <textarea
+                      placeholder="Cole aqui o código do QR Code do seu PIX..."
+                      value={localStorage.getItem(`pix_key_${slug}`) || ''}
+                      onChange={(e) => {
+                        localStorage.setItem(`pix_key_${slug}`, e.target.value);
+                        // Forçar re-render simples (ideal seria state, mas para MVP basta)
+                        const val = e.target.value;
+                        const el = document.getElementById('pix-textarea') as HTMLTextAreaElement;
+                        if (el) el.value = val;
+                        toast.success('Código salvo localmente!');
+                      }}
+                      id="pix-textarea"
+                      className="w-full min-h-[100px] rounded-lg border-2 border-primary/30 bg-input/50 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/60 transition-all font-mono text-xs"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      * Este código será exibido para seus clientes na tela de pagamento.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Configuração de Horários (Mock Visual) */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Card className="neon-card opacity-80">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center">
+                    <div className="w-0.5 h-2 bg-primary" />
+                  </div>
+                  Horários de Funcionamento (Em Breve)
+                </CardTitle>
+                <CardDescription>
+                  Defina os horários disponíveis para agendamento
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {['09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'].map(h => (
+                      <div key={h} className="flex items-center gap-2 p-2 rounded border border-border/50 bg-muted/20">
+                        <input type="checkbox" defaultChecked className="accent-neon-cyan" />
+                        <span className="text-sm font-mono">{h}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-yellow-500 flex items-center gap-1">
+                    Isso é uma prévia. A funcionalidade completa requer atualização de banco de dados.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </div>
     </DashboardLayout>
