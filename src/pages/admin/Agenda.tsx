@@ -202,6 +202,15 @@ const Agenda = () => {
                           <Button
                             size="sm"
                             variant="outline"
+                            onClick={() => handleUpdateStatus(ag.id, 'concluido')}
+                            disabled={updateStatus.isPending}
+                            className="text-primary border-primary/30 hover:bg-primary/10"
+                          >
+                            Concluir
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => handleUpdateStatus(ag.id, 'cancelado')}
                             disabled={updateStatus.isPending}
                             className="text-destructive border-destructive/30 hover:bg-destructive/10"
