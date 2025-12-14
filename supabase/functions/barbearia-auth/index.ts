@@ -31,7 +31,8 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { action, slug, password, barbearia_id, new_password } = await req.json();
+    const body = await req.json();
+    const { action, slug, password, barbearia_id, new_password, ...rest } = body;
 
     console.log(`Barbearia auth action: ${action}, slug: ${slug}`);
 
@@ -40,6 +41,42 @@ serve(async (req) => {
       const hash = await hashPassword(password);
       return new Response(
         JSON.stringify({ hash }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (action === 'create-barbearia') {
+      const { nome, proprietario_nome, email, telefone, endereco, descricao, plano_tipo, plano_valor } = rest;
+
+      const hash = await hashPassword(password);
+
+      const { data, error } = await supabase
+        .from('barbearias')
+        .insert({
+          nome,
+          proprietario_nome,
+          email,
+          telefone,
+          endereco,
+          descricao,
+          slug,
+          plano_tipo,
+          plano_valor,
+          senha_hash: hash
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating barbearia:', error);
+        return new Response(
+          JSON.stringify({ success: false, error: 'Erro ao criar barbearia: ' + error.message }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, barbearia: data }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -85,14 +122,14 @@ serve(async (req) => {
 
       // Generate a simple session token
       const sessionToken = crypto.randomUUID();
-      
+
       return new Response(
-        JSON.stringify({ 
-          success: true, 
-          barbearia: { 
-            id: barbearia.id, 
-            nome: barbearia.nome, 
-            slug: barbearia.slug 
+        JSON.stringify({
+          success: true,
+          barbearia: {
+            id: barbearia.id,
+            nome: barbearia.nome,
+            slug: barbearia.slug
           },
           session_token: sessionToken
         }),
@@ -103,7 +140,7 @@ serve(async (req) => {
     if (action === 'update_password') {
       // Update barbearia password
       const hash = await hashPassword(new_password);
-      
+
       const { error } = await supabase
         .from('barbearias')
         .update({ senha_hash: hash })
