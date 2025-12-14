@@ -14,6 +14,7 @@ const Pagamento = () => {
   const [copiado, setCopiado] = useState(false);
   const [processando, setProcessando] = useState(false);
   const [clienteNome, setClienteNome] = useState('');
+  const [clienteTelefone, setClienteTelefone] = useState('');
 
   const { data: barbearia } = useBarbeariaBySlug(slug);
 
@@ -64,8 +65,8 @@ const Pagamento = () => {
   };
 
   const criarAgendamento = async () => {
-    if (!clienteNome.trim()) {
-      toast.error('Por favor, informe seu nome');
+    if (!clienteNome.trim() || !clienteTelefone.trim()) {
+      toast.error('Por favor, informe seu nome e telefone');
       return;
     }
 
@@ -77,6 +78,7 @@ const Pagamento = () => {
     setProcessando(true);
 
     try {
+      // @ts-ignore
       const { error } = await supabase
         .from('agendamentos')
         .insert({
@@ -84,6 +86,7 @@ const Pagamento = () => {
           barbeiro_id: barbeiroId,
           servico_id: servicoId,
           cliente_nome: clienteNome.trim(),
+          cliente_telefone: clienteTelefone.trim(),
           data: data,
           hora: horario,
           valor_total: servicoPreco,
@@ -195,6 +198,16 @@ const Pagamento = () => {
               required
             />
           </div>
+          <div className="space-y-2 mt-4">
+            <label className="text-sm font-medium">Seu WhatsApp (para confirmação)</label>
+            <Input
+              placeholder="(11) 99999-9999"
+              value={clienteTelefone}
+              onChange={(e) => setClienteTelefone(e.target.value)}
+              required
+              type="tel"
+            />
+          </div>
         </motion.div>
 
         {/* Resumo */}
@@ -301,7 +314,7 @@ const Pagamento = () => {
               variant="neon"
               className="w-full"
               onClick={criarAgendamento}
-              disabled={processando || !clienteNome.trim()}
+              disabled={processando || !clienteNome.trim() || !clienteTelefone.trim()}
             >
               {processando ? (
                 <div className="flex items-center gap-2">

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
-import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, Filter, Loader2 } from 'lucide-react';
+import { Calendar, Clock, User, CheckCircle, XCircle, AlertCircle, Filter, Loader2, MessageCircle } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,6 +42,25 @@ const Agenda = () => {
   const handleUpdateStatus = (id: string, novoStatus: Agendamento['status']) => {
     if (!barbearia?.id) return;
     updateStatus.mutate({ id, status: novoStatus, barbeariaId: barbearia.id });
+  };
+
+  const handleWhatsApp = (telefone: string | null, tipo: 'confirmacao' | 'lembrete', agendamento: any) => {
+    if (!telefone) {
+      alert('Cliente sem telefone cadastrado');
+      return;
+    }
+
+    const tel = telefone.replace(/\D/g, '');
+    const dataFormatada = new Date(agendamento.data + 'T12:00:00').toLocaleDateString('pt-BR');
+
+    let mensagem = '';
+    if (tipo === 'confirmacao') {
+      mensagem = `Olá ${agendamento.cliente_nome}, tudo bem? Sou da ${agendamento.barbearia?.nome || 'Barbearia'}. Gostaria de confirmar seu agendamento para ${dataFormatada} às ${agendamento.hora}.`;
+    } else {
+      mensagem = `Olá ${agendamento.cliente_nome}! Passando para lembrar do seu horário hoje (${dataFormatada}) às ${agendamento.hora} na ${agendamento.barbearia?.nome || 'Barbearia'}.`;
+    }
+
+    window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(mensagem)}`, '_blank');
   };
 
   // Contagem por status
@@ -187,73 +206,105 @@ const Agenda = () => {
                     </div>
 
                     {/* Ações */}
-                    <div className="flex flex-wrap gap-2 shrink-0">
-                      {ag.status === 'pendente' && (
-                        <>
+                    {/* Ações */}
+                    <div className="flex flex-col gap-2 shrink-0">
+                      <div className="flex flex-wrap gap-2">
+                        {ag.status === 'pendente' && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleUpdateStatus(ag.id, 'confirmado')}
+                              disabled={updateStatus.isPending}
+                              className="text-neon-green border-neon-green/30 hover:bg-neon-green/10"
+                            >
+                              Confirmar
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleUpdateStatus(ag.id, 'concluido')}
+                              disabled={updateStatus.isPending}
+                              className="text-primary border-primary/30 hover:bg-primary/10"
+                            >
+                              Concluir
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleUpdateStatus(ag.id, 'cancelado')}
+                              disabled={updateStatus.isPending}
+                              className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                            >
+                              Cancelar
+                            </Button>
+                          </>
+                        )}
+                        {ag.status === 'confirmado' && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleUpdateStatus(ag.id, 'concluido')}
+                              disabled={updateStatus.isPending}
+                              className="text-primary border-primary/30 hover:bg-primary/10"
+                            >
+                              Concluir
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleUpdateStatus(ag.id, 'cancelado')}
+                              disabled={updateStatus.isPending}
+                              className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                            >
+                              Cancelar
+                            </Button>
+                          </>
+                        )}
+                        {ag.status === 'concluido' && (
+                          <span className="text-sm text-muted-foreground italic">Atendimento finalizado</span>
+                        )}
+                        {ag.status === 'cancelado' && (
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleUpdateStatus(ag.id, 'confirmado')}
+                            onClick={() => handleUpdateStatus(ag.id, 'pendente')}
                             disabled={updateStatus.isPending}
-                            className="text-neon-green border-neon-green/30 hover:bg-neon-green/10"
+                            className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
                           >
+                            Reabrir
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Botões do WhatsApp */}
+                      {/* @ts-ignore */}
+                      {ag.cliente_telefone && ag.status !== 'cancelado' && ag.status !== 'concluido' && (
+                        <div className="flex gap-2 mt-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            // @ts-ignore
+                            onClick={() => handleWhatsApp(ag.cliente_telefone, 'confirmacao', ag)}
+                            className="text-xs h-7 text-green-500 hover:text-green-400 hover:bg-green-500/10"
+                            title="Enviar confirmação"
+                          >
+                            <MessageCircle className="w-3 h-3 mr-1" />
                             Confirmar
                           </Button>
                           <Button
                             size="sm"
-                            variant="outline"
-                            onClick={() => handleUpdateStatus(ag.id, 'concluido')}
-                            disabled={updateStatus.isPending}
-                            className="text-primary border-primary/30 hover:bg-primary/10"
+                            variant="ghost"
+                            // @ts-ignore
+                            onClick={() => handleWhatsApp(ag.cliente_telefone, 'lembrete', ag)}
+                            className="text-xs h-7 text-neon-cyan hover:text-neon-cyan hover:bg-neon-cyan/10"
+                            title="Enviar lembrete"
                           >
-                            Concluir
+                            <MessageCircle className="w-3 h-3 mr-1" />
+                            Lembrete
                           </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleUpdateStatus(ag.id, 'cancelado')}
-                            disabled={updateStatus.isPending}
-                            className="text-destructive border-destructive/30 hover:bg-destructive/10"
-                          >
-                            Cancelar
-                          </Button>
-                        </>
-                      )}
-                      {ag.status === 'confirmado' && (
-                        <>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleUpdateStatus(ag.id, 'concluido')}
-                            disabled={updateStatus.isPending}
-                            className="text-primary border-primary/30 hover:bg-primary/10"
-                          >
-                            Concluir
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleUpdateStatus(ag.id, 'cancelado')}
-                            disabled={updateStatus.isPending}
-                            className="text-destructive border-destructive/30 hover:bg-destructive/10"
-                          >
-                            Cancelar
-                          </Button>
-                        </>
-                      )}
-                      {ag.status === 'concluido' && (
-                        <span className="text-sm text-muted-foreground italic">Atendimento finalizado</span>
-                      )}
-                      {ag.status === 'cancelado' && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleUpdateStatus(ag.id, 'pendente')}
-                          disabled={updateStatus.isPending}
-                          className="text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/10"
-                        >
-                          Reabrir
-                        </Button>
+                        </div>
                       )}
                     </div>
                   </motion.div>

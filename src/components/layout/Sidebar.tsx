@@ -1,16 +1,18 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  Scissors, 
-  Users, 
-  Calendar, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Scissors,
+  Users,
+  Calendar,
+  Settings,
   Store,
   LogOut,
   ChevronLeft,
   ChevronRight,
-  DollarSign
+  DollarSign,
+  QrCode,
+  Clock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
@@ -36,7 +38,9 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
     { href: `/admin/${barbeariaSlug}/servicos`, icon: Scissors, label: 'Serviços' },
     { href: `/admin/${barbeariaSlug}/barbeiros`, icon: Users, label: 'Barbeiros' },
     { href: `/admin/${barbeariaSlug}/agenda`, icon: Calendar, label: 'Agenda' },
+    { href: `/admin/${barbeariaSlug}/horarios`, icon: Clock, label: 'Horários' },
     { href: `/admin/${barbeariaSlug}/financeiro`, icon: DollarSign, label: 'Financeiro' },
+    { href: `/admin/${barbeariaSlug}/pix`, icon: QrCode, label: 'Configurar PIX' },
     { href: `/admin/${barbeariaSlug}/configuracoes`, icon: Settings, label: 'Configurações' },
   ];
 
@@ -57,7 +61,7 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
             <Scissors className="w-5 h-5 text-background" />
           </div>
           {!collapsed && (
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="font-display text-lg neon-text"
@@ -82,8 +86,8 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
                 to={link.href}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300",
-                  isActive 
-                    ? "bg-sidebar-accent text-sidebar-primary shadow-neon" 
+                  isActive
+                    ? "bg-sidebar-accent text-sidebar-primary shadow-neon"
                     : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                 )}
               >
@@ -103,7 +107,7 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
           {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
           {!collapsed && <span>Recolher</span>}
         </button>
-        
+
         <Link
           to="/auth/login"
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-all"

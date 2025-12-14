@@ -23,6 +23,8 @@ import Servicos from "./pages/admin/Servicos";
 import Barbeiros from "./pages/admin/Barbeiros";
 import Financeiro from "./pages/admin/Financeiro";
 import Agenda from "./pages/admin/Agenda";
+import Horarios from "./pages/admin/Horarios";
+import PixConfig from "./pages/admin/PixConfig";
 import Configuracoes from "./pages/admin/Configuracoes";
 
 // Booking Pages
@@ -61,6 +63,8 @@ const App = () => (
           <Route path="/admin/:slug/barbeiros" element={<Barbeiros />} />
           <Route path="/admin/:slug/financeiro" element={<Financeiro />} />
           <Route path="/admin/:slug/agenda" element={<Agenda />} />
+          <Route path="/admin/:slug/horarios" element={<Horarios />} />
+          <Route path="/admin/:slug/pix" element={<PixConfig />} />
           <Route path="/admin/:slug/configuracoes" element={<Configuracoes />} />
 
           {/* Booking Flow */}
