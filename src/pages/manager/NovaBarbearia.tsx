@@ -205,6 +205,9 @@ const NovaBarbearia = () => {
               <Button variant="outline" onClick={() => navigate('/manager')}>
                 Voltar ao Dashboard
               </Button>
+              <Button variant="outline" onClick={() => window.open(adminLink, '_blank')}>
+                Acessar Painel
+              </Button>
               <Button variant="neon" onClick={() => {
                 setCreatedSlug(null);
                 setForm({

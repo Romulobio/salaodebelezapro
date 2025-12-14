@@ -153,8 +153,18 @@ export const BarbeariaCard = ({ barbearia, index }: BarbeariaCardProps) => {
               size="sm"
               onClick={copyAdminLink}
               className="shrink-0"
+              title="Copiar Link"
             >
               {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(adminLink, '_blank')}
+              className="shrink-0"
+              title="Abrir em nova aba"
+            >
+              <Link2 className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -165,16 +175,16 @@ export const BarbeariaCard = ({ barbearia, index }: BarbeariaCardProps) => {
             <span className="text-xs text-muted-foreground font-normal">/mês</span>
           </span>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
+            <Button
+              variant="outline"
+              size="icon"
               onClick={() => setEditOpen(true)}
               title="Editar"
             >
               <Edit className="w-4 h-4" />
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="icon"
               onClick={handleBlock}
               title={isBlocked ? "Desbloquear" : "Bloquear"}
@@ -184,8 +194,8 @@ export const BarbeariaCard = ({ barbearia, index }: BarbeariaCardProps) => {
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="icon"
                   title="Excluir"
                   className="text-destructive hover:text-destructive"
@@ -197,7 +207,7 @@ export const BarbeariaCard = ({ barbearia, index }: BarbeariaCardProps) => {
                 <AlertDialogHeader>
                   <AlertDialogTitle>Excluir Barbearia</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Tem certeza que deseja excluir a barbearia "{barbearia.nome}"? 
+                    Tem certeza que deseja excluir a barbearia "{barbearia.nome}"?
                     Esta ação não pode ser desfeita.
                   </AlertDialogDescription>
                 </AlertDialogHeader>

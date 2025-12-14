@@ -140,8 +140,11 @@ const Configuracoes = () => {
                   <label className="text-sm font-medium text-foreground">Link de Agendamento (para clientes)</label>
                   <div className="flex gap-2">
                     <Input value={bookingLink} readOnly className="bg-muted/50" />
-                    <Button variant="outline" size="icon" onClick={() => handleCopyLink(bookingLink, 'agendamento')}>
+                    <Button variant="outline" size="icon" onClick={() => handleCopyLink(bookingLink, 'agendamento')} title="Copiar">
                       <Copy className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" onClick={() => window.open(bookingLink, '_blank')} title="Abrir">
+                      <ExternalLink className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -150,8 +153,11 @@ const Configuracoes = () => {
                   <label className="text-sm font-medium text-foreground">Link de Administração (para você)</label>
                   <div className="flex gap-2">
                     <Input value={adminLink} readOnly className="bg-muted/50" />
-                    <Button variant="outline" size="icon" onClick={() => handleCopyLink(adminLink, 'administração')}>
+                    <Button variant="outline" size="icon" onClick={() => handleCopyLink(adminLink, 'administração')} title="Copiar">
                       <Copy className="w-4 h-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" onClick={() => window.open(adminLink, '_blank')} title="Abrir">
+                      <ExternalLink className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
