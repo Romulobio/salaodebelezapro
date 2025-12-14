@@ -338,7 +338,7 @@ const Configuracoes = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <div className="w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center">
-                    <Clock className="w-3 h-3 text-primary" />
+                    <Clock className="w-3 h-3 text-neon-cyan" />
                   </div>
                   Horários de Funcionamento
                 </CardTitle>
@@ -356,6 +356,7 @@ const Configuracoes = () => {
                         type="time"
                         value={horarioInicio}
                         onChange={(e) => setHorarioInicio(e.target.value)}
+                        className="bg-background border-neon-cyan/50 text-neon-cyan focus:border-neon-cyan focus:ring-neon-cyan/20 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                       />
                     </div>
                     <div className="space-y-2">
@@ -364,6 +365,7 @@ const Configuracoes = () => {
                         type="time"
                         value={horarioFim}
                         onChange={(e) => setHorarioFim(e.target.value)}
+                        className="bg-background border-neon-cyan/50 text-neon-cyan focus:border-neon-cyan focus:ring-neon-cyan/20 [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-50 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                       />
                     </div>
                     <div className="space-y-2">
