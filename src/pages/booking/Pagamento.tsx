@@ -29,15 +29,26 @@ const Pagamento = () => {
 
   // Código PIX (Dinâmico ou Default)
   const [codigoPix, setCodigoPix] = useState('00020126580014br.gov.bcb.pix0136a1b2c3d4-e5f6-7890-abcd-ef1234567890520400005303986540550.005802BR5925BARBEARIA NEON STYLE6009SAO PAULO62140510AGENDAMENTO6304ABCD');
+  const [qrCodeImage, setQrCodeImage] = useState('/pix-logo.png');
 
   useEffect(() => {
-    if (slug) {
-      const savedPix = localStorage.getItem(`pix_key_${slug}`);
-      if (savedPix) {
-        setCodigoPix(savedPix);
-      }
+    if (barbearia?.id) {
+      const loadPixConfig = async () => {
+        // @ts-ignore
+        const { data } = await supabase
+          .from('agenda_config')
+          .select('pix_chave, pix_qrcode_base64')
+          .eq('barbearia_id', barbearia.id)
+          .maybeSingle();
+
+        if (data) {
+          if (data.pix_chave) setCodigoPix(data.pix_chave);
+          if (data.pix_qrcode_base64) setQrCodeImage(data.pix_qrcode_base64);
+        }
+      };
+      loadPixConfig();
     }
-  }, [slug]);
+  }, [barbearia?.id]);
 
   const formatarData = (dataStr: string | null) => {
     if (!dataStr) return '';
@@ -251,7 +262,7 @@ const Pagamento = () => {
 
           {/* Logo PIX */}
           <div className="w-48 h-48 mx-auto bg-white rounded-xl p-4 mb-6 flex items-center justify-center">
-            <img src="/pix-logo.png" alt="QR Code PIX" className="w-full h-full object-contain" />
+            <img src={qrCodeImage} alt="QR Code PIX" className="w-full h-full object-contain" />
           </div>
 
           <p className="text-muted-foreground text-sm mb-4">

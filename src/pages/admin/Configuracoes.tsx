@@ -314,17 +314,48 @@ const Configuracoes = () => {
                     <textarea
                       placeholder="Cole aqui o código do QR Code do seu PIX..."
                       value={pixKey}
-                      onChange={(e) => {
-                        setPixKey(e.target.value);
-                        localStorage.setItem(`pix_key_${slug}`, e.target.value);
-                      }}
-                      id="pix-textarea"
+                      onChange={(e) => setPixKey(e.target.value)}
                       className="w-full min-h-[100px] rounded-lg border-2 border-primary/30 bg-input/50 px-4 py-3 text-neon-cyan placeholder:text-muted-foreground focus:outline-none focus:border-neon-cyan transition-all font-mono text-xs"
-                    />
                     />
                     <p className="text-xs text-muted-foreground">
                       * Este código será exibido para seus clientes na tela de pagamento.
                     </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">Imagem QR Code (Opcional)</label>
+                    <div className="flex items-center gap-4">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="bg-input/50 border-primary/30 text-foreground file:text-primary file:font-medium"
+                      />
+                      {pixQrCode && (
+                        <div className="w-12 h-12 bg-white p-1 rounded">
+                          <img src={pixQrCode} alt="Preview" className="w-full h-full object-contain" />
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Faça upload do QR Code para que o cliente possa escanear.
+                    </p>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <Button onClick={handleSaveAgenda} disabled={loading} className="w-full md:w-auto">
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Salvando...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4 mr-2" />
+                          Salvar Configurações PIX e Agenda
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </div>
               </CardContent>
