@@ -22,11 +22,17 @@ const Configuracoes = () => {
   const [horarioFim, setHorarioFim] = useState('19:00');
   const [intervalo, setIntervalo] = useState('30');
 
+  // Estado do PIX
+  const [pixKey, setPixKey] = useState('');
+
   useEffect(() => {
     if (barbeariaId) {
       loadAgendaConfig();
     }
-  }, [barbeariaId]);
+    // Carregar PIX do localStorage
+    const savedPix = localStorage.getItem(`pix_key_${slug}`);
+    if (savedPix) setPixKey(savedPix);
+  }, [barbeariaId, slug]);
 
   const loadAgendaConfig = async () => {
     // @ts-ignore
@@ -307,17 +313,14 @@ const Configuracoes = () => {
                     <label className="text-sm font-medium text-foreground">Código PIX (Copia e Cola)</label>
                     <textarea
                       placeholder="Cole aqui o código do QR Code do seu PIX..."
-                      value={localStorage.getItem(`pix_key_${slug}`) || ''}
+                      value={pixKey}
                       onChange={(e) => {
+                        setPixKey(e.target.value);
                         localStorage.setItem(`pix_key_${slug}`, e.target.value);
-                        // Forçar re-render simples (ideal seria state, mas para MVP basta)
-                        const val = e.target.value;
-                        const el = document.getElementById('pix-textarea') as HTMLTextAreaElement;
-                        if (el) el.value = val;
-                        toast.success('Código salvo localmente!');
                       }}
                       id="pix-textarea"
-                      className="w-full min-h-[100px] rounded-lg border-2 border-primary/30 bg-input/50 px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/60 transition-all font-mono text-xs"
+                      className="w-full min-h-[100px] rounded-lg border-2 border-primary/30 bg-input/50 px-4 py-3 text-neon-cyan placeholder:text-muted-foreground focus:outline-none focus:border-neon-cyan transition-all font-mono text-xs"
+                    />
                     />
                     <p className="text-xs text-muted-foreground">
                       * Este código será exibido para seus clientes na tela de pagamento.

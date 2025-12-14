@@ -249,9 +249,9 @@ const Pagamento = () => {
             <h2 className="text-xl font-display font-semibold">Pague com PIX</h2>
           </div>
 
-          {/* QR Code simulado */}
-          <div className="w-48 h-48 mx-auto bg-white rounded-xl p-4 mb-6">
-            <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMSAyMSI+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTAgMGg3djdIMHptMTQgMGg3djdoLTd6TTAgMTRoN3Y3SDB6Ii8+PHBhdGggZmlsbD0iIzAwMCIgZD0iTTIgMmgzdjNoLTN6bTE0IDBoM3YzaC0zek0yIDE2aDN2M2gtM3ptOC04aDV2NWgtNXptMi0yaDN2MmgtM3ptMiAyaDN2M2gtM3ptLTIgMmgxdjFoLTF6bTIgMmgxdjJoLTF6bTItMmgxdjNoLTF6Ii8+PC9zdmc+')] bg-contain" />
+          {/* Logo PIX */}
+          <div className="w-48 h-48 mx-auto bg-white rounded-xl p-4 mb-6 flex items-center justify-center">
+            <img src="/pix-logo.png" alt="QR Code PIX" className="w-full h-full object-contain" />
           </div>
 
           <p className="text-muted-foreground text-sm mb-4">
