@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
-import { useParams, Link } from 'react-router-dom';
-import { CheckCircle, Calendar, ArrowRight, Sparkles } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import { CheckCircle, Calendar, Sparkles, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Sucesso = () => {
@@ -71,16 +71,9 @@ const Sucesso = () => {
           transition={{ delay: 0.5 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Button size="lg" variant="neon" asChild>
-            <Link to="/">
-              Voltar ao Início
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Link>
-          </Button>
-          <Button size="lg" variant="outline" asChild>
-            <Link to={`/agendar/${slug}`}>
-              Novo Agendamento
-            </Link>
+          <Button size="lg" variant="neon" onClick={() => window.close()}>
+            Fechar Página
+            <X className="w-5 h-5 ml-2" />
           </Button>
         </motion.div>
 
