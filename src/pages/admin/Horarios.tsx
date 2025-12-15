@@ -185,7 +185,7 @@ const Horarios = () => {
                                         type="time"
                                         value={almocoInicio}
                                         onChange={(e) => setAlmocoInicio(e.target.value)}
-                                        className="bg-background/50"
+                                        className="bg-background border-neon-cyan/30 text-neon-cyan"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -194,7 +194,7 @@ const Horarios = () => {
                                         type="time"
                                         value={almocoFim}
                                         onChange={(e) => setAlmocoFim(e.target.value)}
-                                        className="bg-background/50"
+                                        className="bg-background border-neon-cyan/30 text-neon-cyan"
                                     />
                                 </div>
                             </div>
@@ -206,7 +206,7 @@ const Horarios = () => {
                                         type="time"
                                         value={jantarInicio}
                                         onChange={(e) => setJantarInicio(e.target.value)}
-                                        className="bg-background/50"
+                                        className="bg-background border-neon-cyan/30 text-neon-cyan"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -215,7 +215,7 @@ const Horarios = () => {
                                         type="time"
                                         value={jantarFim}
                                         onChange={(e) => setJantarFim(e.target.value)}
-                                        className="bg-background/50"
+                                        className="bg-background border-neon-cyan/30 text-neon-cyan"
                                     />
                                 </div>
                             </div>
