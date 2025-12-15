@@ -114,195 +114,197 @@ export const BarbeariaCard = ({ barbearia, index, planos }: BarbeariaCardProps) 
     // I should update the badge logic to handle non-matching cases or just display the plan name dynamically.
 
     // I'll update logic below.
-    const updateMutation = useUpdateBarbearia();
-    id: barbearia.id,
+    // I'll update logic below.
+    const selectedPlano = planos.find(p => p.id === editData.plano_tipo);
+
+    updateMutation.mutate({
+      id: barbearia.id,
       ...editData,
-  plano_valor: selectedPlano?.valor || 0,
+      plano_valor: selectedPlano?.valor || 0,
     }, {
-  onSuccess: () => setEditOpen(false),
+      onSuccess: () => setEditOpen(false),
     });
   };
 
-return (
-  <>
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
-      className={cn("neon-card-hover group", isBlocked && "opacity-60")}
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h3 className="text-xl font-display font-bold text-foreground group-hover:neon-text transition-all">
-            {barbearia.nome}
-            {isBlocked && <span className="ml-2 text-xs text-destructive">(Bloqueada)</span>}
-          </h3>
-          <p className="text-muted-foreground text-sm mt-1">
-            Proprietário: {barbearia.proprietario_nome}
-          </p>
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.1, duration: 0.5 }}
+        className={cn("neon-card-hover group", isBlocked && "opacity-60")}
+      >
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-xl font-display font-bold text-foreground group-hover:neon-text transition-all">
+              {barbearia.nome}
+              {isBlocked && <span className="ml-2 text-xs text-destructive">(Bloqueada)</span>}
+            </h3>
+            <p className="text-muted-foreground text-sm mt-1">
+              Proprietário: {barbearia.proprietario_nome}
+            </p>
+          </div>
+          <span className={cn("px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1", displayPlan.className)}>
+            {barbearia.plano_tipo === 'premium' && <Crown className="w-3 h-3" />}
+            {displayPlan.label}
+          </span>
         </div>
-        <span className={cn("px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1", displayPlan.className)}>
-          {barbearia.plano_tipo === 'premium' && <Crown className="w-3 h-3" />}
-          {displayPlan.label}
-        </span>
-      </div>
 
-      <div className="space-y-2 text-sm text-muted-foreground mb-4">
-        {barbearia.endereco && (
+        <div className="space-y-2 text-sm text-muted-foreground mb-4">
+          {barbearia.endereco && (
+            <div className="flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-neon-cyan" />
+              <span>{barbearia.endereco}</span>
+            </div>
+          )}
+          {barbearia.telefone && (
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-neon-cyan" />
+              <span>{barbearia.telefone}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Link do Admin */}
+        <div className="mb-4 p-3 bg-muted/50 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <Link2 className="w-4 h-4 text-neon-cyan" />
+            <span className="text-xs text-muted-foreground">Link do Painel Admin</span>
+          </div>
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-neon-cyan" />
-            <span>{barbearia.endereco}</span>
-          </div>
-        )}
-        {barbearia.telefone && (
-          <div className="flex items-center gap-2">
-            <Phone className="w-4 h-4 text-neon-cyan" />
-            <span>{barbearia.telefone}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Link do Admin */}
-      <div className="mb-4 p-3 bg-muted/50 rounded-lg">
-        <div className="flex items-center gap-2 mb-2">
-          <Link2 className="w-4 h-4 text-neon-cyan" />
-          <span className="text-xs text-muted-foreground">Link do Painel Admin</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            readOnly
-            value={adminLink}
-            className="flex-1 text-xs bg-background/50 px-2 py-1 rounded border border-border truncate"
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={copyAdminLink}
-            className="shrink-0"
-            title="Copiar Link"
-          >
-            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.open(adminLink, '_blank')}
-            className="shrink-0"
-            title="Abrir em nova aba"
-          >
-            <Link2 className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between pt-4 border-t border-border/50">
-        <span className="text-2xl font-display font-bold neon-text">
-          R$ {(barbearia.plano_valor || 0).toFixed(2)}
-          <span className="text-xs text-muted-foreground font-normal">/mês</span>
-        </span>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setEditOpen(true)}
-            title="Editar"
-          >
-            <Edit className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={handleBlock}
-            title={isBlocked ? "Desbloquear" : "Bloquear"}
-            className={isBlocked ? "text-green-500 hover:text-green-600" : "text-yellow-500 hover:text-yellow-600"}
-          >
-            <Ban className="w-4 h-4" />
-          </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                title="Excluir"
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Excluir Barbearia</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Tem certeza que deseja excluir a barbearia "{barbearia.nome}"?
-                  Esta ação não pode ser desfeita.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
-                  Excluir
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
-    </motion.div>
-
-    {/* Dialog de Edição */}
-    <Dialog open={editOpen} onOpenChange={setEditOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Editar Barbearia</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label>Nome da Barbearia</Label>
-            <Input
-              value={editData.nome}
-              onChange={(e) => setEditData({ ...editData, nome: e.target.value })}
+            <input
+              type="text"
+              readOnly
+              value={adminLink}
+              className="flex-1 text-xs bg-background/50 px-2 py-1 rounded border border-border truncate"
             />
-          </div>
-          <div className="space-y-2">
-            <Label>Proprietário</Label>
-            <Input
-              value={editData.proprietario_nome}
-              onChange={(e) => setEditData({ ...editData, proprietario_nome: e.target.value })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Email</Label>
-            <Input
-              type="email"
-              value={editData.email}
-              onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Telefone</Label>
-            <Input
-              value={editData.telefone}
-              onChange={(e) => setEditData({ ...editData, telefone: e.target.value })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Endereço</Label>
-            <Input
-              value={editData.endereco}
-              onChange={(e) => setEditData({ ...editData, endereco: e.target.value })}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Plano</Label>
-            <Select
-              value={editData.plano_tipo}
-              onValueChange={(value) => setEditData({ ...editData, plano_tipo: value })}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyAdminLink}
+              className="shrink-0"
+              title="Copiar Link"
             >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
+              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(adminLink, '_blank')}
+              className="shrink-0"
+              title="Abrir em nova aba"
+            >
+              <Link2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-4 border-t border-border/50">
+          <span className="text-2xl font-display font-bold neon-text">
+            R$ {(barbearia.plano_valor || 0).toFixed(2)}
+            <span className="text-xs text-muted-foreground font-normal">/mês</span>
+          </span>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setEditOpen(true)}
+              title="Editar"
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handleBlock}
+              title={isBlocked ? "Desbloquear" : "Bloquear"}
+              className={isBlocked ? "text-green-500 hover:text-green-600" : "text-yellow-500 hover:text-yellow-600"}
+            >
+              <Ban className="w-4 h-4" />
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  title="Excluir"
+                  className="text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Excluir Barbearia</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja excluir a barbearia "{barbearia.nome}"?
+                    Esta ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+                    Excluir
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Dialog de Edição */}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Barbearia</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Nome da Barbearia</Label>
+              <Input
+                value={editData.nome}
+                onChange={(e) => setEditData({ ...editData, nome: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Proprietário</Label>
+              <Input
+                value={editData.proprietario_nome}
+                onChange={(e) => setEditData({ ...editData, proprietario_nome: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input
+                type="email"
+                value={editData.email}
+                onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Telefone</Label>
+              <Input
+                value={editData.telefone}
+                onChange={(e) => setEditData({ ...editData, telefone: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Endereço</Label>
+              <Input
+                value={editData.endereco}
+                onChange={(e) => setEditData({ ...editData, endereco: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Plano</Label>
+              <Select
+                value={editData.plano_tipo}
+                onValueChange={(value) => setEditData({ ...editData, plano_tipo: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
                   {planos.map((plano) => (
                     <SelectItem key={plano.id} value={plano.id}>
@@ -310,20 +312,19 @@ return (
                     </SelectItem>
                   ))}
                 </SelectContent>
-              </SelectContent>
-            </Select>
+              </Select>
+            </div>
+            <div className="flex justify-end gap-2 pt-4">
+              <Button variant="outline" onClick={() => setEditOpen(false)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleEdit} disabled={updateMutation.isPending}>
+                {updateMutation.isPending ? 'Salvando...' : 'Salvar'}
+              </Button>
+            </div>
           </div>
-          <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={() => setEditOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleEdit} disabled={updateMutation.isPending}>
-              {updateMutation.isPending ? 'Salvando...' : 'Salvar'}
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
-  </>
-);
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 };
