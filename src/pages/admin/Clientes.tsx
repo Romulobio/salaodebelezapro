@@ -15,7 +15,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -179,7 +179,13 @@ const Clientes = () => {
                                                 </TableCell>
                                                 <TableCell>
                                                     <span className="text-sm text-muted-foreground">
-                                                        {format(new Date(cliente.ultimaVisita), "dd/MM/yyyy", { locale: ptBR })}
+                                                        {(() => {
+                                                            try {
+                                                                return format(new Date(cliente.ultimaVisita + 'T00:00:00'), "dd/MM/yyyy", { locale: ptBR })
+                                                            } catch (e) {
+                                                                return cliente.ultimaVisita
+                                                            }
+                                                        })()}
                                                     </span>
                                                 </TableCell>
                                                 <TableCell className="text-right">
@@ -205,7 +211,13 @@ const Clientes = () => {
                                                                                 <div className="flex items-center gap-2">
                                                                                     <Calendar className="w-4 h-4 text-primary" />
                                                                                     <span className="font-medium">
-                                                                                        {format(new Date(ag.data), "dd/MM/yyyy", { locale: ptBR })}
+                                                                                        {(() => {
+                                                                                            try {
+                                                                                                return format(new Date(ag.data + 'T00:00:00'), "dd/MM/yyyy", { locale: ptBR })
+                                                                                            } catch (e) {
+                                                                                                return ag.data
+                                                                                            }
+                                                                                        })()}
                                                                                     </span>
                                                                                     <span className="text-xs bg-muted px-2 py-0.5 rounded text-muted-foreground">
                                                                                         {ag.hora}
@@ -217,7 +229,7 @@ const Clientes = () => {
                                                                             </div>
                                                                             <div className="flex justify-between items-center text-sm">
                                                                                 <span className="text-muted-foreground">
-                                                                                    {ag.servico?.nome || 'Serviço excluído'}
+                                                                                    {ag.servico_nome || 'Serviço'}
                                                                                 </span>
                                                                                 <Badge variant="outline" className={`
                                                                                     text-xs
