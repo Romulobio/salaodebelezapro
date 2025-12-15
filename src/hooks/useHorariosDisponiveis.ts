@@ -138,6 +138,39 @@ export const useHorariosDisponiveis = ({ barbeariaSlug, barbeiroId, data, servic
       // Mark blocked slots from manual blocks
       bloqueados.forEach(h => ocupadosSet.add(h));
 
+      // Mark Lunch and Dinner breaks as occupied
+      // @ts-ignore
+      const configAny = config as any;
+      if (configAny?.almoco_inicio && configAny?.almoco_fim) {
+        const [startH, startM] = configAny.almoco_inicio.split(':').map(Number);
+        const [endH, endM] = configAny.almoco_fim.split(':').map(Number);
+        const startMins = startH * 60 + startM;
+        const endMins = endH * 60 + endM;
+
+        slots.forEach(slot => {
+          const [h, m] = slot.split(':').map(Number);
+          const slotMins = h * 60 + m;
+          if (slotMins >= startMins && slotMins < endMins) {
+            ocupadosSet.add(slot);
+          }
+        });
+      }
+
+      if (configAny?.jantar_inicio && configAny?.jantar_fim) {
+        const [startH, startM] = configAny.jantar_inicio.split(':').map(Number);
+        const [endH, endM] = configAny.jantar_fim.split(':').map(Number);
+        const startMins = startH * 60 + startM;
+        const endMins = endH * 60 + endM;
+
+        slots.forEach(slot => {
+          const [h, m] = slot.split(':').map(Number);
+          const slotMins = h * 60 + m;
+          if (slotMins >= startMins && slotMins < endMins) {
+            ocupadosSet.add(slot);
+          }
+        });
+      }
+
       // Mark blocked slots from appointments (considering duration)
       agendamentos?.forEach(ag => {
         // @ts-ignore

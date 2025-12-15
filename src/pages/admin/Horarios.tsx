@@ -20,6 +20,12 @@ const Horarios = () => {
     const [horarioFim, setHorarioFim] = useState('19:00');
     const [intervalo, setIntervalo] = useState('30');
 
+    // Break times
+    const [almocoInicio, setAlmocoInicio] = useState('');
+    const [almocoFim, setAlmocoFim] = useState('');
+    const [jantarInicio, setJantarInicio] = useState('');
+    const [jantarFim, setJantarFim] = useState('');
+
     useEffect(() => {
         const fetchBarbearia = async () => {
             if (!slug) return;
@@ -50,10 +56,17 @@ const Horarios = () => {
             .maybeSingle();
 
         if (data) {
+            const dataAny = data as any;
             setDiaConfig((data.dias_funcionamento as string[]) || []);
             setHorarioInicio(data.horario_inicio || '09:00');
             setHorarioFim(data.horario_fim || '19:00');
             setIntervalo(data.intervalo_minutos?.toString() || '30');
+
+            // Breaks
+            setAlmocoInicio(dataAny.almoco_inicio || '');
+            setAlmocoFim(dataAny.almoco_fim || '');
+            setJantarInicio(dataAny.jantar_inicio || '');
+            setJantarFim(dataAny.jantar_fim || '');
         }
     };
 
@@ -67,7 +80,11 @@ const Horarios = () => {
             horario_inicio: horarioInicio,
             horario_fim: horarioFim,
             intervalo_minutos: parseInt(intervalo),
-        };
+            almoco_inicio: almocoInicio || null,
+            almoco_fim: almocoFim || null,
+            jantar_inicio: jantarInicio || null,
+            jantar_fim: jantarFim || null,
+        } as any;
 
         // Usando upsert mas tomando cuidado. 
         // O ideal seria update se já existir, mas upsert resolve se mantermos os outros campos ou se o banco aceitar partial update no upsert.
@@ -157,6 +174,48 @@ const Horarios = () => {
                                         step="15"
                                         value={intervalo}
                                         onChange={(e) => setIntervalo(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-border pt-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-muted-foreground">Início Almoço (Opcional)</label>
+                                    <Input
+                                        type="time"
+                                        value={almocoInicio}
+                                        onChange={(e) => setAlmocoInicio(e.target.value)}
+                                        className="bg-background/50"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-muted-foreground">Fim Almoço (Opcional)</label>
+                                    <Input
+                                        type="time"
+                                        value={almocoFim}
+                                        onChange={(e) => setAlmocoFim(e.target.value)}
+                                        className="bg-background/50"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-border pb-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-muted-foreground">Início Jantar (Opcional)</label>
+                                    <Input
+                                        type="time"
+                                        value={jantarInicio}
+                                        onChange={(e) => setJantarInicio(e.target.value)}
+                                        className="bg-background/50"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-muted-foreground">Fim Jantar (Opcional)</label>
+                                    <Input
+                                        type="time"
+                                        value={jantarFim}
+                                        onChange={(e) => setJantarFim(e.target.value)}
+                                        className="bg-background/50"
                                     />
                                 </div>
                             </div>
