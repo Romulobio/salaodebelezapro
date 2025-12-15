@@ -13,11 +13,13 @@ const AgendarHorario = () => {
   // Recuperar dados do localStorage
   const barbeiroId = localStorage.getItem('agendamento.barbeiro');
   const dataSelecionada = localStorage.getItem('agendamento.data');
+  const servicoId = localStorage.getItem('agendamento.servico');
 
   const { data: horariosData, isLoading } = useHorariosDisponiveis({
     barbeariaSlug: slug,
     barbeiroId: barbeiroId || undefined,
     data: dataSelecionada || undefined,
+    servicoId: servicoId || undefined,
   });
 
   const todosHorarios = horariosData?.todosHorarios || [];
@@ -114,10 +116,10 @@ const AgendarHorario = () => {
                     disabled={isOcupado}
                     onClick={() => setHorarioSelecionado(horario)}
                     className={`p-4 rounded-xl text-center transition-all ${isOcupado
-                        ? 'bg-muted/30 text-muted-foreground cursor-not-allowed line-through'
-                        : isSelected
-                          ? 'bg-primary/20 border-2 border-primary shadow-neon'
-                          : 'bg-muted/50 hover:bg-muted border border-border/50 hover:border-primary/50'
+                      ? 'bg-muted/30 text-muted-foreground cursor-not-allowed line-through'
+                      : isSelected
+                        ? 'bg-primary/20 border-2 border-primary shadow-neon'
+                        : 'bg-muted/50 hover:bg-muted border border-border/50 hover:border-primary/50'
                       }`}
                   >
                     <span className={`text-lg font-display font-bold ${isSelected ? 'neon-text' : ''}`}>

@@ -7,15 +7,37 @@ const HORARIOS_BASE = [
   '16:00', '16:30', '17:00', '17:30', '18:00', '18:30',
 ];
 
+// Helper to add minutes to a time string (HH:MM)
+const addMinutes = (time: string, minutes: number): string => {
+  const [h, m] = time.split(':').map(Number);
+  const date = new Date();
+  date.setHours(h, m, 0, 0);
+  date.setMinutes(date.getMinutes() + minutes);
+  return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+};
+
+// Helper to check if a time is between start and end (exclusive of end)
+const isTimeOccupied = (time: string, start: string, duration: number): boolean => {
+  const [th, tm] = time.split(':').map(Number);
+  const timeMins = th * 60 + tm;
+
+  const [sh, sm] = start.split(':').map(Number);
+  const startMins = sh * 60 + sm;
+  const endMins = startMins + duration;
+
+  return timeMins >= startMins && timeMins < endMins;
+};
+
 interface UseHorariosDisponiveisParams {
   barbeariaSlug: string | undefined;
   barbeiroId: string | undefined;
   data: string | undefined;
+  servicoId?: string | null;
 }
 
-export const useHorariosDisponiveis = ({ barbeariaSlug, barbeiroId, data }: UseHorariosDisponiveisParams) => {
+export const useHorariosDisponiveis = ({ barbeariaSlug, barbeiroId, data, servicoId }: UseHorariosDisponiveisParams) => {
   return useQuery({
-    queryKey: ['horarios-disponiveis', barbeariaSlug, barbeiroId, data],
+    queryKey: ['horarios-disponiveis', barbeariaSlug, barbeiroId, data, servicoId],
     queryFn: async () => {
       if (!barbeariaSlug || !barbeiroId || !data) {
         return { disponiveis: HORARIOS_BASE, ocupados: [] as string[] };
@@ -75,10 +97,13 @@ export const useHorariosDisponiveis = ({ barbeariaSlug, barbeiroId, data }: UseH
         current.setMinutes(current.getMinutes() + agenda.intervalo);
       }
 
-      // 5. Buscar Agendamentos (Ocupados)
+      // 5. Buscar Agendamentos (Ocupados) com Duração
       const { data: agendamentos } = await supabase
         .from('agendamentos')
-        .select('hora')
+        .select(`
+          hora,
+          servico:servicos(duracao_minutos)
+        `)
         .eq('barbearia_id', barbearia.id)
         .eq('barbeiro_id', barbeiroId)
         .eq('data', data)
@@ -93,15 +118,90 @@ export const useHorariosDisponiveis = ({ barbeariaSlug, barbeiroId, data }: UseH
         .eq('data', data)
         .maybeSingle();
 
-      const agendados = agendamentos?.map(a => a.hora.slice(0, 5)) || [];
-      const bloqueados = (bloqueios?.horarios as string[]) || [];
+      // Get duration of requested service (defaults to interval if not found)
+      let requestedDuration = agenda.intervalo;
+      if (servicoId) {
+        const { data: servico } = await supabase
+          .from('servicos')
+          .select('duracao_minutos')
+          .eq('id', servicoId)
+          .maybeSingle();
+        if (servico?.duracao_minutos) {
+          requestedDuration = servico.duracao_minutos;
+        }
+      }
 
-      const ocupadosTotal = [...new Set([...agendados, ...bloqueados])];
-      const disponiveis = slots.filter(h => !ocupadosTotal.includes(h));
+      // Calculate ALL occupied slots based on existing appointments ranges
+      const bloqueados = (bloqueios?.horarios as string[]) || [];
+      const ocupadosSet = new Set<string>();
+
+      // Mark blocked slots from manual blocks
+      bloqueados.forEach(h => ocupadosSet.add(h));
+
+      // Mark blocked slots from appointments (considering duration)
+      agendamentos?.forEach(ag => {
+        // @ts-ignore
+        const duration = ag.servico?.duracao_minutos || agenda.intervalo;
+        const start = ag.hora.slice(0, 5);
+
+        // Add all slots that fall within this appointment
+        slots.forEach(slot => {
+          if (isTimeOccupied(slot, start, duration)) {
+            ocupadosSet.add(slot);
+          }
+        });
+      });
+
+      // Filter available slots
+      // A slot is available if:
+      // 1. It is not occupied/blocked itself
+      // 2. AND sufficient subsequent time is free for the requested service duration
+      const disponiveis = slots.filter(slot => {
+        if (ocupadosSet.has(slot)) return false;
+
+        // Check if the requested service fits starting at this slot
+        // We check sample points every 'interval' minutes.
+        // Or strictly: Any time T where slot <= T < slot + requestedDuration must NOT be occupied.
+        // Since we deal with discrete slots usually, we check if covering slots are free.
+
+        let currentTime = slot;
+        let coveredMinutes = 0;
+
+        // Simple check: check overlapping slots
+        // (This assumes we only care about slot alignment)
+        while (coveredMinutes < requestedDuration) {
+          // Be careful: if duration extends beyond closing time, it's invalid?
+          // Implementation choice: allow if it fits within open hours? 
+          // Usually yes.
+
+          // If this sub-slot is occupied, then the start 'slot' is invalid.
+          // Note: 'isTimeOccupied' logic above was for marking. Here we check logic.
+          // We can reuse the set.
+
+          const [h, m] = currentTime.split(':').map(Number);
+          const currentMinutes = h * 60 + m;
+          const [eh, em] = agenda.horario_fim.split(':').map(Number);
+          const endMinutes = eh * 60 + em;
+
+          if (currentMinutes >= endMinutes) return false; // Exceeds closing time
+
+          // Check if specific aligned slot is in set (only works if duration is multiple of interval)
+          // For robustness, better to check if 'currentTime' falls into any known occupied range?
+          // But we already flattened ranges into 'ocupadosSet'.
+          // So we just check if the generated `currentTime` key is in `ocupadosSet`.
+          if (ocupadosSet.has(currentTime)) return false;
+
+          // Advance
+          currentTime = addMinutes(currentTime, agenda.intervalo);
+          coveredMinutes += agenda.intervalo;
+        }
+
+        return true;
+      });
 
       return {
         disponiveis,
-        ocupados: ocupadosTotal,
+        ocupados: Array.from(ocupadosSet),
         todosHorarios: slots,
       };
     },
