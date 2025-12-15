@@ -154,7 +154,7 @@ const Horarios = () => {
                                         type="time"
                                         value={horarioInicio}
                                         onChange={(e) => setHorarioInicio(e.target.value)}
-                                        className="bg-background border-neon-cyan/50 text-neon-cyan"
+                                        className="bg-background border-neon-cyan/50 text-white"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -163,7 +163,7 @@ const Horarios = () => {
                                         type="time"
                                         value={horarioFim}
                                         onChange={(e) => setHorarioFim(e.target.value)}
-                                        className="bg-background border-neon-cyan/50 text-neon-cyan"
+                                        className="bg-background border-neon-cyan/50 text-white"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -174,7 +174,7 @@ const Horarios = () => {
                                         step="15"
                                         value={intervalo}
                                         onChange={(e) => setIntervalo(e.target.value)}
-                                        className="bg-background border-neon-cyan/50 text-neon-cyan"
+                                        className="bg-background border-neon-cyan/50 text-white"
                                     />
                                 </div>
                             </div>
@@ -186,7 +186,7 @@ const Horarios = () => {
                                         type="time"
                                         value={almocoInicio}
                                         onChange={(e) => setAlmocoInicio(e.target.value)}
-                                        className="bg-background border-neon-cyan/30 text-neon-cyan"
+                                        className="bg-background border-neon-cyan/30 text-white"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -195,7 +195,7 @@ const Horarios = () => {
                                         type="time"
                                         value={almocoFim}
                                         onChange={(e) => setAlmocoFim(e.target.value)}
-                                        className="bg-background border-neon-cyan/30 text-neon-cyan"
+                                        className="bg-background border-neon-cyan/30 text-white"
                                     />
                                 </div>
                             </div>
@@ -207,7 +207,7 @@ const Horarios = () => {
                                         type="time"
                                         value={jantarInicio}
                                         onChange={(e) => setJantarInicio(e.target.value)}
-                                        className="bg-background border-neon-cyan/30 text-neon-cyan"
+                                        className="bg-background border-neon-cyan/30 text-white"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -216,7 +216,7 @@ const Horarios = () => {
                                         type="time"
                                         value={jantarFim}
                                         onChange={(e) => setJantarFim(e.target.value)}
-                                        className="bg-background border-neon-cyan/30 text-neon-cyan"
+                                        className="bg-background border-neon-cyan/30 text-white"
                                     />
                                 </div>
                             </div>
