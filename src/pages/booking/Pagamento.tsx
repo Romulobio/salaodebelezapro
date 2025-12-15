@@ -114,9 +114,10 @@ const Pagamento = () => {
       const localAgendamentos = JSON.parse(localStorage.getItem('db_agendamentos') || '[]');
       localStorage.setItem('db_agendamentos', JSON.stringify([...localAgendamentos, novoAgendamento]));
 
-      toast.warning('Atenção: Erro ao conectar com servidor. Agendamento salvo APENAS neste dispositivo.', {
-        description: 'O administrador não recebeu este agendamento. Entre em contato pelo WhatsApp.',
-        duration: 8000,
+      console.error('Erro detalhado Supabase:', JSON.stringify(error, null, 2));
+      toast.warning('Erro ao salvar no banco. Modo Offline ativado.', {
+        description: `Erro: ${JSON.stringify(error)}`,
+        duration: 15000,
       });
     } finally {
       // Limpar localStorage (dados temporários do fluxo)

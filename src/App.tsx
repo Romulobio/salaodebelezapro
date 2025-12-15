@@ -35,6 +35,8 @@ import AgendarHorario from "./pages/booking/AgendarHorario";
 import Pagamento from "./pages/booking/Pagamento";
 import Sucesso from "./pages/booking/Sucesso";
 
+import TesteConexao from "./pages/TesteConexao";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -44,7 +46,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Public */}
+          <Route path="/teste-conexao" element={<TesteConexao />} />
           <Route path="/" element={<Index />} />
           <Route path="/auth/login" element={<Login />} />
 
