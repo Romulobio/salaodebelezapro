@@ -10,6 +10,7 @@ export interface Agendamento {
   barbeiro_id: string;
   servico_id: string;
   cliente_nome: string;
+  cliente_telefone?: string | null;
   data: string;
   hora: string;
   valor_total: number;

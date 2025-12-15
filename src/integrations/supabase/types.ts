@@ -67,6 +67,7 @@ export type Database = {
           barbeiro_id: string
           cliente_id: string | null
           cliente_nome: string
+          cliente_telefone: string | null
           created_at: string
           data: string
           hora: string
@@ -82,6 +83,7 @@ export type Database = {
           barbeiro_id: string
           cliente_id?: string | null
           cliente_nome: string
+          cliente_telefone?: string | null
           created_at?: string
           data: string
           hora: string
@@ -97,6 +99,7 @@ export type Database = {
           barbeiro_id?: string
           cliente_id?: string | null
           cliente_nome?: string
+          cliente_telefone?: string | null
           created_at?: string
           data?: string
           hora?: string
@@ -238,6 +241,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      planos: {
+        Row: {
+          ativo: boolean
+          beneficios: string[] | null
+          created_at: string
+          descricao: string | null
+          id: string
+          intervalo_dias: number
+          max_agendamentos: number | null
+          max_barbeiros: number | null
+          nome: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          ativo?: boolean
+          beneficios?: string[] | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          intervalo_dias: number
+          max_agendamentos?: number | null
+          max_barbeiros?: number | null
+          nome: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          ativo?: boolean
+          beneficios?: string[] | null
+          created_at?: string
+          descricao?: string | null
+          id?: string
+          intervalo_dias?: number
+          max_agendamentos?: number | null
+          max_barbeiros?: number | null
+          nome?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: []
       }
       profiles: {
         Row: {

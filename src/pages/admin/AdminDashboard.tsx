@@ -9,6 +9,8 @@ import { useBarbeariaBySlug } from '@/hooks/useBarbearia';
 import { useAgendamentos, useUpdateAgendamentoStatus } from '@/hooks/useAgendamentos';
 import { useServicosBySlug } from '@/hooks/useServicos';
 
+import { useBarbeariaPlan } from '@/hooks/useBarbeariaPlan';
+
 const AdminDashboard = () => {
   const { slug } = useParams<{ slug: string }>();
 
@@ -18,7 +20,21 @@ const AdminDashboard = () => {
   const { data: servicos = [] } = useServicosBySlug(slug);
   const updateStatus = useUpdateAgendamentoStatus();
 
+  const { data: plano } = useBarbeariaPlan(barbearia?.id, barbearia?.plano_tipo);
+
+  // Lógica de Bloqueio WhatsApp
+  // Bloqueia se o plano tiver nome 'basico' (case insensitive) ou se for o ID 'basico' legado
+  const isBasicPlan =
+    (plano?.nome && plano.nome.toLowerCase().includes('básico')) ||
+    (plano?.nome && plano.nome.toLowerCase().includes('basico')) ||
+    barbearia?.plano_tipo === 'basico';
+
   const handleWhatsApp = (telefone: string | null, tipo: 'confirmacao' | 'lembrete', agendamento: any) => {
+    if (isBasicPlan) {
+      // toast.error is not imported but we can import it or just return.
+      // Better to disable the button in UI, but safety check here too.
+      return;
+    }
     if (!telefone) return;
     const tel = telefone.replace(/\D/g, '');
     const dataFormatada = new Date(agendamento.data + 'T12:00:00').toLocaleDateString('pt-BR');
@@ -211,10 +227,14 @@ const AdminDashboard = () => {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="text-green-500 hover:text-green-400 hover:bg-green-500/10 h-8 px-2"
-                            title="WhatsApp Confirmar"
+                            className={isBasicPlan ? "text-gray-500 cursor-not-allowed h-8 px-2" : "text-green-500 hover:text-green-400 hover:bg-green-500/10 h-8 px-2"}
+                            title={isBasicPlan ? "WhatsApp não disponível no plano Básico" : "WhatsApp Confirmar"}
                             // @ts-ignore
-                            onClick={() => handleWhatsApp(ag.cliente_telefone, 'confirmacao', ag)}
+                            onClick={() => {
+                              if (isBasicPlan) return;
+                              handleWhatsApp(ag.cliente_telefone, 'confirmacao', ag);
+                            }}
+                            disabled={isBasicPlan}
                           >
                             <MessageCircle className="w-4 h-4" />
                           </Button>

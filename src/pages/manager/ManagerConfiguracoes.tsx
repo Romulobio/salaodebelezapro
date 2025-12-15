@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Settings, Plus, Trash2, Check, Lock, CreditCard, Save } from 'lucide-react';
+import { Settings, Plus, Trash2, Check, Lock, CreditCard, Save, Edit2 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +22,7 @@ const ManagerConfiguracoes = () => {
     const [planos, setPlanos] = useState<Plano[]>([]);
 
     // States Formulário Plano
+    const [editingId, setEditingId] = useState<string | null>(null);
     const [novoPlano, setNovoPlano] = useState({
         nome: '',
         valor: '',
@@ -42,31 +43,63 @@ const ManagerConfiguracoes = () => {
         carregarPlanos();
     }, []);
 
-    const handleCriarPlano = async (e: React.FormEvent) => {
+    const handleSalvarPlano = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         const beneficiosArray = novoPlano.beneficios.split(',').map(b => b.trim()).filter(b => b);
 
         try {
-            const { error } = await supabase.from('planos').insert({
-                nome: novoPlano.nome,
-                valor: parseFloat(novoPlano.valor),
-                descricao: novoPlano.descricao,
-                beneficios: beneficiosArray,
-                ativo: true
-            });
+            if (editingId) {
+                // UPDATE
+                const { error } = await supabase.from('planos').update({
+                    nome: novoPlano.nome,
+                    valor: parseFloat(novoPlano.valor),
+                    descricao: novoPlano.descricao,
+                    beneficios: beneficiosArray,
+                    intervalo_dias: 30 // Default 30 dias
+                }).eq('id', editingId);
 
-            if (error) throw error;
+                if (error) throw error;
+                toast.success('Plano atualizado com sucesso!');
+            } else {
+                // INSERT
+                const { error } = await supabase.from('planos').insert({
+                    nome: novoPlano.nome,
+                    valor: parseFloat(novoPlano.valor),
+                    descricao: novoPlano.descricao,
+                    beneficios: beneficiosArray,
+                    ativo: true,
+                    intervalo_dias: 30 // Default 30 dias
+                });
 
-            toast.success('Plano criado com sucesso!');
+                if (error) throw error;
+                toast.success('Plano criado com sucesso!');
+            }
+
             setNovoPlano({ nome: '', valor: '', descricao: '', beneficios: '' });
+            setEditingId(null);
             carregarPlanos();
         } catch (error: any) {
-            toast.error('Erro ao criar plano: ' + error.message);
+            toast.error('Erro ao salvar plano: ' + error.message);
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleEditar = (plano: Plano) => {
+        setNovoPlano({
+            nome: plano.nome,
+            valor: plano.valor.toString(),
+            descricao: plano.descricao,
+            beneficios: plano.beneficios ? plano.beneficios.join(', ') : ''
+        });
+        setEditingId(plano.id);
+    };
+
+    const handleCancelarEdicao = () => {
+        setNovoPlano({ nome: '', valor: '', descricao: '', beneficios: '' });
+        setEditingId(null);
     };
 
     const handleExcluirPlano = async (id: string) => {
@@ -132,12 +165,12 @@ const ManagerConfiguracoes = () => {
                     {/* TAB PLANOS */}
                     <TabsContent value="planos" className="space-y-6">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            {/* Form Criar */}
+                            {/* Form Criar/Editar */}
                             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="neon-card">
                                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                                    <Plus className="w-5 h-5 text-neon-green" /> Novo Plano
+                                    <Plus className="w-5 h-5 text-neon-green" /> {editingId ? 'Editar Plano' : 'Novo Plano'}
                                 </h3>
-                                <form onSubmit={handleCriarPlano} className="space-y-4">
+                                <form onSubmit={handleSalvarPlano} className="space-y-4">
                                     <div>
                                         <label className="text-sm font-medium">Nome do Plano</label>
                                         <Input
@@ -175,9 +208,16 @@ const ManagerConfiguracoes = () => {
                                             onChange={e => setNovoPlano({ ...novoPlano, beneficios: e.target.value })}
                                         />
                                     </div>
-                                    <Button type="submit" variant="neon" className="w-full" disabled={loading}>
-                                        {loading ? 'Salvando...' : 'Criar Plano'}
-                                    </Button>
+                                    <div className="flex gap-2">
+                                        {editingId && (
+                                            <Button type="button" variant="outline" className="flex-1" onClick={handleCancelarEdicao}>
+                                                Cancelar
+                                            </Button>
+                                        )}
+                                        <Button type="submit" variant="neon" className="flex-1" disabled={loading}>
+                                            {loading ? 'Salvando...' : (editingId ? 'Atualizar Plano' : 'Criar Plano')}
+                                        </Button>
+                                    </div>
                                 </form>
                             </motion.div>
 
@@ -189,7 +229,7 @@ const ManagerConfiguracoes = () => {
                                         <p className="text-muted-foreground">Nenhum plano cadastrado.</p>
                                     ) : (
                                         planos.map(plano => (
-                                            <div key={plano.id} className="p-4 rounded-xl border border-border bg-card/50 flex justify-between items-start group hover:border-primary/50 transition-all">
+                                            <div key={plano.id} className={`p-4 rounded-xl border bg-card/50 flex justify-between items-start group transition-all ${editingId === plano.id ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50'}`}>
                                                 <div>
                                                     <div className="flex items-center gap-2">
                                                         <h4 className="font-bold text-lg">{plano.nome}</h4>
@@ -204,14 +244,24 @@ const ManagerConfiguracoes = () => {
                                                         ))}
                                                     </div>
                                                 </div>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    onClick={() => handleExcluirPlano(plano.id)}
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </Button>
+                                                <div className="flex gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-primary hover:text-primary hover:bg-primary/20"
+                                                        onClick={() => handleEditar(plano)}
+                                                    >
+                                                        <Edit2 className="w-4 h-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="text-destructive hover:text-destructive hover:bg-destructive/20"
+                                                        onClick={() => handleExcluirPlano(plano.id)}
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
                                             </div>
                                         ))
                                     )}

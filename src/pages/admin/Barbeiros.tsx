@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useBarbeariaBySlug } from '@/hooks/useBarbearia';
+import { useBarbeariaPlan } from '@/hooks/useBarbeariaPlan';
 
 interface Barbeiro {
   id: string;
@@ -23,7 +24,14 @@ interface Barbeiro {
 const Barbeiros = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: barbearia, isLoading: loadingBarbearia } = useBarbeariaBySlug(slug);
+  const { data: plano } = useBarbeariaPlan(barbearia?.id, barbearia?.plano_tipo);
+
   const [barbeiros, setBarbeiros] = useState<Barbeiro[]>([]);
+
+  const reachedLimit = plano?.max_barbeiros ? barbeiros.length >= plano.max_barbeiros : false;
+  const legacyLimit = barbearia?.plano_tipo === 'basico' && barbeiros.length >= 3;
+  const isBlocked = reachedLimit || legacyLimit;
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -43,7 +51,7 @@ const Barbeiros = () => {
 
   const fetchBarbeiros = async () => {
     if (!barbearia?.id) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('barbeiros')
@@ -64,7 +72,7 @@ const Barbeiros = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!barbearia?.id) return;
-    
+
     setSaving(true);
 
     try {
@@ -135,7 +143,7 @@ const Barbeiros = () => {
         .eq('id', id);
 
       if (error) throw error;
-      
+
       setBarbeiros(prev => prev.filter(b => b.id !== id));
       toast.success('Barbeiro removido!');
     } catch (error: any) {
@@ -162,11 +170,28 @@ const Barbeiros = () => {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between mb-8"
         >
+  // Fallback for legacy 'basico' string if not migrated yet
+  const legacyLimit = barbearia?.plano_tipo === 'basico' && barbeiros.length >= 3;
+          const isBlocked = reachedLimit || legacyLimit;
+
+          // ...
+
           <div>
             <h1 className="text-3xl font-display font-bold neon-text">Barbeiros</h1>
             <p className="text-muted-foreground mt-1">Gerencie a equipe de barbeiros</p>
           </div>
-          <Button variant="neon" onClick={() => setShowForm(true)}>
+          <Button
+            variant="neon"
+            onClick={() => {
+              if (isBlocked) {
+                toast.error(`Seu plano permite apenas ${plano?.max_barbeiros || 3} barbeiros.`);
+                return;
+              }
+              setShowForm(true);
+            }}
+            disabled={isBlocked && !editingId} // Only disable if creating new
+            className={isBlocked ? "opacity-50 cursor-not-allowed" : ""}
+          >
             <Plus className="w-5 h-5 mr-2" />
             Novo Barbeiro
           </Button>

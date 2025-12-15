@@ -74,9 +74,13 @@ export const BarbeariaCard = ({ barbearia, index, planos }: BarbeariaCardProps) 
   };
 
   const handleBlock = () => {
+    // Se estiver ativo (true ou undefined), queremos bloquear (false)
+    // Se estiver inativo (false), queremos desbloquear (true)
+    const novoStatus = barbearia.ativo === false ? true : false;
+
     updateMutation.mutate({
       id: barbearia.id,
-      ativo: !isBlocked,
+      ativo: novoStatus,
     });
   };
 

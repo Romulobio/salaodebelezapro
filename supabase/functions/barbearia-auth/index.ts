@@ -85,7 +85,7 @@ serve(async (req) => {
       // Verify password for barbearia login
       const { data: barbearia, error } = await supabase
         .from('barbearias')
-        .select('id, nome, slug, senha_hash')
+        .select('id, nome, slug, senha_hash, ativo')
         .eq('slug', slug)
         .maybeSingle();
 
@@ -101,6 +101,13 @@ serve(async (req) => {
         return new Response(
           JSON.stringify({ success: false, error: 'Barbearia não encontrada' }),
           { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      if (barbearia.ativo === false) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Barbearia bloqueada pelo administrador.' }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
@@ -129,7 +136,8 @@ serve(async (req) => {
           barbearia: {
             id: barbearia.id,
             nome: barbearia.nome,
-            slug: barbearia.slug
+            slug: barbearia.slug,
+            ativo: barbearia.ativo
           },
           session_token: sessionToken
         }),

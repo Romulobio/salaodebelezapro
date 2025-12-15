@@ -74,18 +74,38 @@ const BarbeariaLogin = () => {
           }
         } else {
           // Barbearia encontrada no Supabase
+          if (localBarbearia.ativo === false) {
+            toast.error('Esta barbearia foi bloqueada pelo administrador.');
+            return;
+          }
+
           if (localBarbearia.senha_hash === btoa(senha)) {
             success = true;
             barbeariaData = localBarbearia;
             sessionToken = 'mock-token-' + Date.now();
           } else {
-            toast.error('Erro ao conectar com servidor de autenticação.');
+            toast.error('Senha incorreta.');
             return;
           }
         }
       }
 
       if (success && barbeariaData) {
+        // Double check for blocked status (in case Edge Function is outdated or didn't catch it)
+        if (barbeariaData.ativo === false) {
+          toast.error('Esta barbearia foi bloqueada pelo administrador.');
+          return;
+        }
+
+        // Se o ativo não veio (undefined), faz uma checagem de segurança no banco
+        if (barbeariaData.ativo === undefined) {
+          const { data: statusCheck } = await supabase.from('barbearias').select('ativo').eq('slug', slug).single();
+          if (statusCheck && statusCheck.ativo === false) {
+            toast.error('Esta barbearia foi bloqueada pelo administrador.');
+            return;
+          }
+        }
+
         // Store session in sessionStorage
         sessionStorage.setItem('barbearia_session', JSON.stringify({
           ...barbeariaData,
