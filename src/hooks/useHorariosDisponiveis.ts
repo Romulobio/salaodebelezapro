@@ -109,15 +109,6 @@ export const useHorariosDisponiveis = ({ barbeariaSlug, barbeiroId, data, servic
         .eq('data', data)
         .neq('status', 'cancelado');
 
-      // 6. Buscar Bloqueios Específicos
-      // @ts-ignore
-      const { data: bloqueios } = await supabase
-        .from('horarios_bloqueados')
-        .select('horarios')
-        .eq('barbearia_id', barbearia.id)
-        .eq('data', data)
-        .maybeSingle();
-
       // Get duration of requested service (defaults to interval if not found)
       let requestedDuration = agenda.intervalo;
       if (servicoId) {
@@ -132,11 +123,7 @@ export const useHorariosDisponiveis = ({ barbeariaSlug, barbeiroId, data, servic
       }
 
       // Calculate ALL occupied slots based on existing appointments ranges
-      const bloqueados = (bloqueios?.horarios as string[]) || [];
       const ocupadosSet = new Set<string>();
-
-      // Mark blocked slots from manual blocks
-      bloqueados.forEach(h => ocupadosSet.add(h));
 
       // Mark Lunch and Dinner breaks as occupied
       // @ts-ignore
