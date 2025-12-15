@@ -27,6 +27,7 @@ import Agenda from "./pages/admin/Agenda";
 import Horarios from "./pages/admin/Horarios";
 import PixConfig from "./pages/admin/PixConfig";
 import Configuracoes from "./pages/admin/Configuracoes";
+import Clientes from "./pages/admin/Clientes";
 
 // Booking Pages
 import AgendarServico from "./pages/booking/AgendarServico";
@@ -67,6 +68,7 @@ const App = () => (
           <Route path="/admin/:slug/horarios" element={<Horarios />} />
           <Route path="/admin/:slug/pix" element={<PixConfig />} />
           <Route path="/admin/:slug/configuracoes" element={<Configuracoes />} />
+          <Route path="/admin/:slug/clientes" element={<Clientes />} />
 
           {/* Booking Flow */}
           <Route path="/agendar/:slug" element={<AgendarServico />} />

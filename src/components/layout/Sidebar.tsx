@@ -40,6 +40,7 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
     { href: `/admin/${barbeariaSlug}/agenda`, icon: Calendar, label: 'Agenda' },
     { href: `/admin/${barbeariaSlug}/horarios`, icon: Clock, label: 'Horários' },
     { href: `/admin/${barbeariaSlug}/financeiro`, icon: DollarSign, label: 'Financeiro' },
+    { href: `/admin/${barbeariaSlug}/clientes`, icon: Users, label: 'Clientes' },
     { href: `/admin/${barbeariaSlug}/pix`, icon: QrCode, label: 'Configurar PIX' },
     { href: `/admin/${barbeariaSlug}/configuracoes`, icon: Settings, label: 'Configurações' },
   ];
