@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Store, User, Mail, Phone, MapPin, FileText, CreditCard, Lock, Copy, Check, Pencil } from 'lucide-react';
@@ -24,11 +24,16 @@ const NovaBarbearia = () => {
     planoTipo: 'profissional',
   });
 
-  const [planos, setPlanos] = useState([
-    { id: 'basico', nome: 'Básico', valor: 79.90, recursos: ['1 barbeiro', 'Agenda básica', 'Suporte email'] },
-    { id: 'profissional', nome: 'Profissional', valor: 129.90, recursos: ['5 barbeiros', 'Agenda completa', 'Relatórios', 'Suporte prioritário'] },
-    { id: 'premium', nome: 'Premium', valor: 199.90, recursos: ['Ilimitado', 'Todas funções', 'PIX integrado', 'Suporte 24/7', 'API acesso'] },
-  ]);
+  const [planos, setPlanos] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchPlanos = async () => {
+      const { data, error } = await supabase.from('planos').select('*').eq('ativo', true).order('valor');
+      if (data) setPlanos(data);
+      if (error) toast.error('Erro ao carregar planos');
+    };
+    fetchPlanos();
+  }, []);
 
   const updatePlanoValor = (planoId: string, novoValor: number) => {
     setPlanos(prev => prev.map(p =>
