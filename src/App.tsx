@@ -13,6 +13,7 @@ import Login from "./pages/auth/Login";
 import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerFinanceiro from "./pages/manager/ManagerFinanceiro";
 import NovaBarbearia from "./pages/manager/NovaBarbearia";
+import ManagerConfiguracoes from "./pages/manager/ManagerConfiguracoes";
 
 // Barbearia Login
 import BarbeariaLogin from "./pages/barbearia/BarbeariaLogin";
@@ -57,6 +58,7 @@ const App = () => (
           <Route path="/manager/barbearias" element={<ManagerDashboard />} />
           <Route path="/manager/barbearias/nova" element={<NovaBarbearia />} />
           <Route path="/manager/financeiro" element={<ManagerFinanceiro />} />
+          <Route path="/manager/configuracoes" element={<ManagerConfiguracoes />} />
 
           {/* Barbearia Login */}
           <Route path="/barbearia/:slug/login" element={<BarbeariaLogin />} />
