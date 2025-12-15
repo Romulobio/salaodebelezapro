@@ -36,6 +36,7 @@ import Pagamento from "./pages/booking/Pagamento";
 import Sucesso from "./pages/booking/Sucesso";
 
 import TesteConexao from "./pages/TesteConexao";
+import TesteUpdate from "./pages/TesteUpdate";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/teste-conexao" element={<TesteConexao />} />
+          <Route path="/teste-update" element={<TesteUpdate />} />
           <Route path="/" element={<Index />} />
           <Route path="/auth/login" element={<Login />} />
 
