@@ -77,11 +77,19 @@ export const BarbeariaCard = ({ barbearia, index, planos }: BarbeariaCardProps) 
     // Se estiver ativo (true ou undefined), queremos bloquear (false)
     // Se estiver inativo (false), queremos desbloquear (true)
     const novoStatus = barbearia.ativo === false ? true : false;
+    const action = novoStatus ? 'Desbloqueando' : 'Bloqueando';
 
-    updateMutation.mutate({
-      id: barbearia.id,
-      ativo: novoStatus,
-    });
+    toast.promise(
+      updateMutation.mutateAsync({
+        id: barbearia.id,
+        ativo: novoStatus,
+      }),
+      {
+        loading: `${action} barbearia...`,
+        success: `Barbearia ${novoStatus ? 'desbloqueada' : 'bloqueada'} com sucesso!`,
+        error: 'Erro ao alterar status da barbearia'
+      }
+    );
   };
 
   const handleDelete = () => {

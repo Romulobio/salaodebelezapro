@@ -22,6 +22,22 @@ const AdminDashboard = () => {
 
   const { data: plano } = useBarbeariaPlan(barbearia?.id, barbearia?.plano_tipo);
 
+  // Verificação de Bloqueio
+  if (barbearia && barbearia.ativo === false) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+        <div className="neon-card max-w-md w-full text-center space-y-4">
+          <XCircle className="w-16 h-16 text-destructive mx-auto" />
+          <h1 className="text-2xl font-display font-bold text-destructive">Acesso Bloqueado</h1>
+          <p className="text-muted-foreground">Esta barbearia encontra-se temporariamente suspensa. Entre em contato com o suporte para mais informações.</p>
+          <Button variant="outline" onClick={() => window.location.href = `/barbearia/${slug}/login`} className="w-full">
+            Voltar ao Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Lógica de Bloqueio WhatsApp
   // Bloqueia se o plano tiver nome 'basico' (case insensitive) ou se for o ID 'basico' legado
   const isBasicPlan =
