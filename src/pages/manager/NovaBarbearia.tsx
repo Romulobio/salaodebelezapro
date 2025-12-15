@@ -28,9 +28,17 @@ const NovaBarbearia = () => {
 
   useEffect(() => {
     const fetchPlanos = async () => {
+      console.log('Fetching planos...');
       const { data, error } = await supabase.from('planos').select('*').eq('ativo', true).order('valor');
-      if (data) setPlanos(data);
-      if (error) toast.error('Erro ao carregar planos');
+      if (data) {
+        console.log('Planos fetched:', data);
+        setPlanos(data);
+        // toast.success(`Planos carregados: ${data.length}`); // Debug feedback
+      }
+      if (error) {
+        console.error('Error fetching planos:', error);
+        toast.error('Erro ao carregar planos do banco.');
+      }
     };
     fetchPlanos();
   }, []);
@@ -247,7 +255,7 @@ const NovaBarbearia = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
-          <h1 className="text-3xl font-display font-bold neon-text">Nova Barbearia</h1>
+          <h1 className="text-3xl font-display font-bold neon-text">Nova Barbearia (v2)</h1>
           <p className="text-muted-foreground mt-1">Cadastre uma nova barbearia no sistema</p>
         </motion.div>
 
