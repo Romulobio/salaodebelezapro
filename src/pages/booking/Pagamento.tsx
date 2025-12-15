@@ -114,7 +114,10 @@ const Pagamento = () => {
       const localAgendamentos = JSON.parse(localStorage.getItem('db_agendamentos') || '[]');
       localStorage.setItem('db_agendamentos', JSON.stringify([...localAgendamentos, novoAgendamento]));
 
-      toast.info('Modo Offline: Agendamento salvo no dispositivo.');
+      toast.warning('Atenção: Erro ao conectar com servidor. Agendamento salvo APENAS neste dispositivo.', {
+        description: 'O administrador não recebeu este agendamento. Entre em contato pelo WhatsApp.',
+        duration: 8000,
+      });
     } finally {
       // Limpar localStorage (dados temporários do fluxo)
       localStorage.removeItem('agendamento.servico');
