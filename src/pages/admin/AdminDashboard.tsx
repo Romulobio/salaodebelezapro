@@ -210,36 +210,71 @@ const AdminDashboard = () => {
                       <p className="font-medium text-foreground">{ag.barbeiro ? ag.barbeiro.nome : 'N/A'}</p>
                     </div>
 
+                    {/* Actions */}
                     <div className="flex gap-2">
                       {ag.status === 'pendente' && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-neon-green hover:text-neon-green hover:bg-neon-green/10 h-8 px-2"
-                          title="Confirmar"
-                          disabled={updateStatus.isPending}
-                          onClick={() => updateStatus.mutate({ id: ag.id, status: 'confirmado', barbeariaId: barbearia!.id })}
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                        </Button>
+                        <>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-neon-green hover:text-neon-green hover:bg-neon-green/10 h-8 px-2"
+                            title="Confirmar"
+                            disabled={updateStatus.isPending}
+                            onClick={() => updateStatus.mutate({ id: ag.id, status: 'confirmado', barbeariaId: barbearia!.id })}
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-primary hover:text-primary hover:bg-primary/10 h-8 px-2"
+                            title="Concluir"
+                            disabled={updateStatus.isPending}
+                            onClick={() => updateStatus.mutate({ id: ag.id, status: 'concluido', barbeariaId: barbearia!.id })}
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
+                            title="Cancelar"
+                            disabled={updateStatus.isPending}
+                            onClick={() => updateStatus.mutate({ id: ag.id, status: 'cancelado', barbeariaId: barbearia!.id })}
+                          >
+                            <XCircle className="w-4 h-4" />
+                          </Button>
+                        </>
                       )}
 
-                      {(ag.status === 'pendente' || ag.status === 'confirmado') && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
-                          title="Cancelar"
-                          disabled={updateStatus.isPending}
-                          onClick={() => updateStatus.mutate({ id: ag.id, status: 'cancelado', barbeariaId: barbearia!.id })}
-                        >
-                          <XCircle className="w-4 h-4" />
-                        </Button>
+                      {ag.status === 'confirmado' && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-primary hover:text-primary hover:bg-primary/10 h-8 px-2"
+                            title="Concluir"
+                            disabled={updateStatus.isPending}
+                            onClick={() => updateStatus.mutate({ id: ag.id, status: 'concluido', barbeariaId: barbearia!.id })}
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
+                            title="Cancelar"
+                            disabled={updateStatus.isPending}
+                            onClick={() => updateStatus.mutate({ id: ag.id, status: 'cancelado', barbeariaId: barbearia!.id })}
+                          >
+                            <XCircle className="w-4 h-4" />
+                          </Button>
+                        </>
                       )}
 
                       {/* WhatsApp Actions */}
                       {ag.cliente_telefone && (
-                        <>
+                        <div className="flex gap-1">
                           <Button
                             size="sm"
                             variant="ghost"
@@ -254,7 +289,21 @@ const AdminDashboard = () => {
                           >
                             <MessageCircle className="w-4 h-4" />
                           </Button>
-                        </>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className={isBasicPlan ? "text-gray-500 cursor-not-allowed h-8 px-2" : "text-neon-cyan hover:text-neon-cyan hover:bg-neon-cyan/10 h-8 px-2"}
+                            title={isBasicPlan ? "WhatsApp não disponível no plano Básico" : "WhatsApp Lembrete"}
+                            // @ts-ignore
+                            onClick={() => {
+                              if (isBasicPlan) return;
+                              handleWhatsApp(ag.cliente_telefone, 'lembrete', ag);
+                            }}
+                            disabled={isBasicPlan}
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </div>
