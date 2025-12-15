@@ -32,18 +32,6 @@ interface BarbeariaCardProps {
   planos: any[];
 }
 
-const planoBadges = {
-  basico: { label: 'Básico', className: 'bg-muted text-muted-foreground' },
-  profissional: { label: 'Pro', className: 'bg-neon-purple/20 text-neon-purple border border-neon-purple/30' },
-  premium: { label: 'Premium', className: 'bg-gradient-to-r from-neon-cyan/20 to-neon-purple/20 text-neon-cyan border border-neon-cyan/30' },
-};
-
-const planoValores = {
-  basico: 79.90,
-  profissional: 129.90,
-  premium: 199.90,
-};
-
 export const BarbeariaCard = ({ barbearia, index, planos }: BarbeariaCardProps) => {
   const [copied, setCopied] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -59,17 +47,17 @@ export const BarbeariaCard = ({ barbearia, index, planos }: BarbeariaCardProps) 
   const updateMutation = useUpdateBarbearia();
   const deleteMutation = useDeleteBarbearia();
 
-  /* const plano = planoBadges[barbearia.plano_tipo as keyof typeof planoBadges] || planoBadges.basico; */
-  // Lógica Híbrida: Tenta achar no array de planos (novos) ou usa fallback dos antigos
+  // Encontra o plano atual na lista de planos dinâmicos
   const planFound = planos.find(p => p.id === barbearia.plano_tipo);
 
-  // Se não achar (legado), tenta mapear pelo ID antigo
-  const legacyBadge = planoBadges[barbearia.plano_tipo as keyof typeof planoBadges];
-
+  // Se o plano não for encontrado (ex: dados antigos), exibe um fallback genérico ou o texto original
   const displayPlan = {
-    label: planFound ? planFound.nome : (legacyBadge?.label || 'Plano'),
-    className: legacyBadge?.className || 'bg-primary/20 text-primary border border-primary/30'
+    label: planFound ? planFound.nome : (barbearia.plano_tipo || 'Sem Plano'),
+    className: planFound
+      ? 'bg-neon-purple/20 text-neon-purple border border-neon-purple/30'
+      : 'bg-muted text-muted-foreground'
   };
+
   const isBlocked = barbearia.ativo === false;
 
   const adminLink = `${window.location.origin}/barbearia/${barbearia.slug}/login`;
@@ -97,24 +85,6 @@ export const BarbeariaCard = ({ barbearia, index, planos }: BarbeariaCardProps) 
   };
 
   const handleEdit = () => {
-    const selectedPlano = planos.find(p => p.id === editData.plano_tipo); // Assuming select stores plan ID (UUID) OR handle legacy text types.
-    // NOTE: The user's DB has plano_tipo as string (basico/pro). The new plans table has UUIDs.
-    // To support both, we should store the PLAN ID in 'plano_tipo' column if possible, or mapping by name?
-    // The current schema says 'plano_tipo' is string.
-    // If I change 'plano_tipo' to be the UUID of the plan, it might break 'planoBadges' logic which relies on 'basico', 'profissional'.
-    // Let's assume for now we migrate to using UUID or keep using ID from the plans table if I created them with text IDs?
-    // I created them with UUIDs.
-    // This is a transition point.
-    // If I use the plan ID in `plano_tipo`, the badges logic will fail unless I update it.
-    // For now, I'll pass the plan NAME or ID?
-    // The previous code had ids 'basico', 'profissional'.
-    // My new plans table has UUIDs.
-    // The USER expects the plans created in the manager config (UUIDs) to be selectable.
-    // So `plano_tipo` will become a UUID for new assignments.
-    // I should update the badge logic to handle non-matching cases or just display the plan name dynamically.
-
-    // I'll update logic below.
-    // I'll update logic below.
     const selectedPlano = planos.find(p => p.id === editData.plano_tipo);
 
     updateMutation.mutate({
