@@ -174,6 +174,7 @@ const Horarios = () => {
                                         step="15"
                                         value={intervalo}
                                         onChange={(e) => setIntervalo(e.target.value)}
+                                        className="bg-background border-neon-cyan/50 text-neon-cyan"
                                     />
                                 </div>
                             </div>
