@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
-import { Calendar, Users, Scissors, DollarSign, Clock, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, Users, Scissors, DollarSign, Clock, Loader2, CheckCircle, XCircle, MessageCircle } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { StatCard } from '@/components/cards/StatCard';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,21 @@ const AdminDashboard = () => {
   const { data: agendamentos = [], isLoading: loadingAgendamentos } = useAgendamentos(barbearia?.id);
   const { data: servicos = [] } = useServicosBySlug(slug);
   const updateStatus = useUpdateAgendamentoStatus();
+
+  const handleWhatsApp = (telefone: string | null, tipo: 'confirmacao' | 'lembrete', agendamento: any) => {
+    if (!telefone) return;
+    const tel = telefone.replace(/\D/g, '');
+    const dataFormatada = new Date(agendamento.data + 'T12:00:00').toLocaleDateString('pt-BR');
+    let mensagem = '';
+
+    if (tipo === 'confirmacao') {
+      mensagem = `Olá ${agendamento.cliente_nome}, tudo bem? Sou da ${agendamento.barbearia?.nome || 'Barbearia'}. Gostaria de confirmar seu agendamento para ${dataFormatada} às ${agendamento.hora}.`;
+    } else {
+      mensagem = `Olá ${agendamento.cliente_nome}! Passando para lembrar do seu horário hoje (${dataFormatada}) às ${agendamento.hora} na ${agendamento.barbearia?.nome || 'Barbearia'}.`;
+    }
+
+    window.open(`https://wa.me/55${tel}?text=${encodeURIComponent(mensagem)}`, '_blank');
+  };
 
   // Cálculos Estatísticas
   const stats = useMemo(() => {
@@ -188,6 +203,22 @@ const AdminDashboard = () => {
                         >
                           <XCircle className="w-4 h-4" />
                         </Button>
+                      )}
+
+                      {/* WhatsApp Actions */}
+                      {ag.cliente_telefone && (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-green-500 hover:text-green-400 hover:bg-green-500/10 h-8 px-2"
+                            title="WhatsApp Confirmar"
+                            // @ts-ignore
+                            onClick={() => handleWhatsApp(ag.cliente_telefone, 'confirmacao', ag)}
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </Button>
+                        </>
                       )}
                     </div>
                   </div>
