@@ -170,9 +170,6 @@ const Barbeiros = () => {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between mb-8"
         >
-  // Fallback for legacy 'basico' string if not migrated yet
-  const legacyLimit = barbearia?.plano_tipo === 'basico' && barbeiros.length >= 3;
-          const isBlocked = reachedLimit || legacyLimit;
 
           // ...
 
