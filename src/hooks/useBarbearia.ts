@@ -27,7 +27,7 @@ export const useBarbearias = () => {
         .from('barbearias')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
       return data as Barbearia[];
     },
@@ -44,7 +44,7 @@ export const useBarbeariaBySlug = (slug: string | undefined) => {
         .select('*')
         .eq('slug', slug)
         .maybeSingle();
-      
+
       if (error) throw error;
       return data as Barbearia | null;
     },
@@ -54,7 +54,7 @@ export const useBarbeariaBySlug = (slug: string | undefined) => {
 
 export const useCreateBarbearia = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (barbearia: Omit<Barbearia, 'id' | 'created_at' | 'updated_at'>) => {
       const { data, error } = await supabase
@@ -62,7 +62,7 @@ export const useCreateBarbearia = () => {
         .insert(barbearia)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -78,18 +78,22 @@ export const useCreateBarbearia = () => {
 
 export const useUpdateBarbearia = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<Barbearia> & { id: string }) => {
-      const { data, error } = await supabase
-        .from('barbearias')
-        .update(updates)
-        .eq('id', id)
-        .select()
-        .single();
-      
+      // Use Edge Function to bypass RLS policies
+      const { data, error } = await supabase.functions.invoke('barbearia-auth', {
+        body: {
+          action: 'update_barbearia',
+          barbearia_id: id,
+          ...updates
+        }
+      });
+
       if (error) throw error;
-      return data;
+      if (!data.success) throw new Error(data.error || 'Erro desconhecido ao atualizar');
+
+      return data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['barbearias'] });
@@ -103,14 +107,14 @@ export const useUpdateBarbearia = () => {
 
 export const useDeleteBarbearia = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from('barbearias')
         .delete()
         .eq('id', id);
-      
+
       if (error) throw error;
     },
     onSuccess: () => {

@@ -168,6 +168,28 @@ serve(async (req) => {
       );
     }
 
+    if (action === 'update_barbearia') {
+      const { data, error } = await supabase
+        .from('barbearias')
+        .update(rest)
+        .eq('id', barbearia_id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating barbearia (Admin):', error);
+        return new Response(
+          JSON.stringify({ success: false, error: 'Erro ao atualizar barbearia: ' + error.message }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true, data }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
       JSON.stringify({ error: 'Ação inválida' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
