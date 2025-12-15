@@ -21,19 +21,20 @@ const NovaBarbearia = () => {
     telefone: '',
     endereco: '',
     descricao: '',
-    planoTipo: 'profissional',
+    planoTipo: '',
   });
 
   const [planos, setPlanos] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchPlanos = async () => {
-      console.log('Fetching planos...');
       const { data, error } = await supabase.from('planos').select('*').eq('ativo', true).order('valor');
       if (data) {
-        console.log('Planos fetched:', data);
         setPlanos(data);
-        // toast.success(`Planos carregados: ${data.length}`); // Debug feedback
+        // Selecionar o primeiro plano por padrão
+        if (data.length > 0) {
+          setForm(prev => ({ ...prev, planoTipo: data[0].id }));
+        }
       }
       if (error) {
         console.error('Error fetching planos:', error);
@@ -255,7 +256,7 @@ const NovaBarbearia = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
-          <h1 className="text-3xl font-display font-bold neon-text">Nova Barbearia (v2)</h1>
+          <h1 className="text-3xl font-display font-bold neon-text">Nova Barbearia</h1>
           <p className="text-muted-foreground mt-1">Cadastre uma nova barbearia no sistema</p>
         </motion.div>
 
@@ -413,7 +414,7 @@ const NovaBarbearia = () => {
                     className="w-full text-left"
                   >
                     <ul className="mt-4 space-y-2">
-                      {plano.recursos.map((recurso) => (
+                      {(plano.beneficios || plano.recursos || []).map((recurso: string) => (
                         <li key={recurso} className="text-sm text-muted-foreground flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-neon-cyan" />
                           {recurso}
