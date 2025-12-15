@@ -47,17 +47,26 @@ const ManagerConfiguracoes = () => {
         e.preventDefault();
         setLoading(true);
 
+        if (!novoPlano.nome || !novoPlano.valor) {
+            toast.error('Preencha nome e valor');
+            return;
+        }
+
         const beneficiosArray = novoPlano.beneficios.split(',').map(b => b.trim()).filter(b => b);
 
         try {
             if (editingId) {
+                // Determine current interval if available in editing plan, else 30
+                const currentPlan = planos.find(p => p.id === editingId);
+                const currentInterval = (currentPlan as any)?.intervalo_dias || 30;
+
                 // UPDATE
                 const { error } = await supabase.from('planos').update({
                     nome: novoPlano.nome,
                     valor: parseFloat(novoPlano.valor),
                     descricao: novoPlano.descricao,
                     beneficios: beneficiosArray,
-                    intervalo_dias: 30 // Default 30 dias
+                    intervalo_dias: currentInterval // Preserve existing or default
                 }).eq('id', editingId);
 
                 if (error) throw error;
@@ -70,7 +79,7 @@ const ManagerConfiguracoes = () => {
                     descricao: novoPlano.descricao,
                     beneficios: beneficiosArray,
                     ativo: true,
-                    intervalo_dias: 30 // Default 30 dias
+                    intervalo_dias: 30
                 });
 
                 if (error) throw error;
