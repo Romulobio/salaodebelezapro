@@ -205,8 +205,9 @@ export const useUpdateAgendamentoStatus = () => {
       };
       toast.success(statusMessages[data.status as keyof typeof statusMessages]);
     },
-    onError: (error) => {
-      toast.error('Erro ao atualizar status: ' + error.message);
+    onError: (error: any) => {
+      console.error('Erro Update Status:', error);
+      toast.error(`Erro ao atualizar status: ${error.message} (Cód: ${error.code || 'N/A'}) - Verifique se rodou o script SQL!`);
     },
   });
 };
