@@ -1,6 +1,7 @@
+```typescript
 import { ReactNode, useState } from 'react';
 import { Sidebar } from './Sidebar';
-import { Menu } from 'lucide-react';
+import { Menu, Scissors } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
@@ -43,10 +44,26 @@ export const DashboardLayout = ({ children, type, barbeariaSlug }: DashboardLayo
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-auto p-4 md:p-0">
-          {children}
+        <main className="flex-1 overflow-auto p-4 md:p-0 flex flex-col">
+          <div className="flex-1">
+            {children}
+          </div>
+          
+          {/* Footer */}
+          <footer className="py-8 px-6 border-t border-border/50 mt-auto">
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Scissors className="w-5 h-5 text-neon-cyan" />
+                <span className="font-display text-lg">BarberPro</span>
+              </div>
+              <p className="text-muted-foreground text-sm">
+                © 2024 BarberPro. Sistema de Gestão de Barbearias.
+              </p>
+            </div>
+          </footer>
         </main>
       </div>
     </div>
   );
 };
+```
