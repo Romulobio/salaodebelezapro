@@ -20,11 +20,16 @@ import { useState } from 'react';
 interface SidebarProps {
   type: 'manager' | 'admin';
   barbeariaSlug?: string;
+  className?: string;
+  onLinkClick?: () => void;
 }
 
-export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
+export const Sidebar = ({ type, barbeariaSlug, className, onLinkClick }: SidebarProps) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+
+  // Se tiver onLinkClick, assumimos que é mobile, então nunca colapsa
+  const isMobile = !!onLinkClick;
 
   const managerLinks = [
     { href: '/manager', icon: LayoutDashboard, label: 'Dashboard' },
@@ -49,19 +54,21 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
 
   return (
     <motion.aside
-      initial={{ x: -100, opacity: 0 }}
+      initial={isMobile ? { opacity: 1, x: 0 } : { x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       className={cn(
-        "h-screen bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300",
-        collapsed ? "w-20" : "w-64"
+        "bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300",
+        isMobile ? "h-full w-full border-none" : "h-screen",
+        !isMobile && (collapsed ? "w-20" : "w-64"),
+        className
       )}
     >
       <div className="p-6 border-b border-sidebar-border">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/" className="flex items-center gap-3" onClick={onLinkClick}>
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center shadow-neon">
             <Scissors className="w-5 h-5 text-background" />
           </div>
-          {!collapsed && (
+          {(!collapsed || isMobile) && (
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -73,7 +80,7 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
         </Link>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {links.map((link, index) => {
           const isActive = location.pathname === link.href;
           return (
@@ -85,6 +92,7 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
             >
               <Link
                 to={link.href}
+                onClick={onLinkClick}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300",
                   isActive
@@ -93,7 +101,7 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
                 )}
               >
                 <link.icon className={cn("w-5 h-5", isActive && "animate-pulse")} />
-                {!collapsed && <span className="font-medium">{link.label}</span>}
+                {(!collapsed || isMobile) && <span className="font-medium">{link.label}</span>}
               </Link>
             </motion.div>
           );
@@ -101,20 +109,22 @@ export const Sidebar = ({ type, barbeariaSlug }: SidebarProps) => {
       </nav>
 
       <div className="p-4 border-t border-sidebar-border space-y-2">
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground/70 hover:bg-sidebar-accent/50 transition-all"
-        >
-          {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-          {!collapsed && <span>Recolher</span>}
-        </button>
+        {!isMobile && (
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg text-sidebar-foreground/70 hover:bg-sidebar-accent/50 transition-all"
+          >
+            {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
+            {!collapsed && <span>Recolher</span>}
+          </button>
+        )}
 
         <Link
           to="/auth/login"
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-destructive hover:bg-destructive/10 transition-all"
         >
           <LogOut className="w-5 h-5" />
-          {!collapsed && <span>Sair</span>}
+          {(!collapsed || isMobile) && <span>Sair</span>}
         </Link>
       </div>
     </motion.aside>
