@@ -74,7 +74,7 @@ const Agenda = () => {
 
   return (
     <DashboardLayout type="admin" barbeariaSlug={slug}>
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

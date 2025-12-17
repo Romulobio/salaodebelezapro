@@ -140,7 +140,7 @@ const NovaBarbearia = () => {
             };
             localStorage.setItem('db_barbearias', JSON.stringify([...existingData, newBarbearia]));
 
-            toast.info('Modo Local: Barbearia salva no navegador.');
+            toast.info('Modo Local: Salão salvo no navegador.');
           } else {
             throw insertError;
           }
@@ -148,7 +148,7 @@ const NovaBarbearia = () => {
       }
 
       setCreatedSlug(slug);
-      toast.success('Barbearia criada com sucesso!');
+      toast.success('Salão criado com sucesso!');
     } catch (error: any) {
       console.error('Error creating barbearia:', error);
       toast.error(error.message || 'Erro ao criar barbearia');
@@ -185,14 +185,14 @@ const NovaBarbearia = () => {
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center mx-auto mb-6 shadow-neon">
               <Check className="w-8 h-8 text-background" />
             </div>
-            <h1 className="text-3xl font-display font-bold neon-text mb-2">Barbearia Criada!</h1>
+            <h1 className="text-3xl font-display font-bold neon-text mb-2">Salão Criado!</h1>
             <p className="text-muted-foreground mb-8">
-              A barbearia foi cadastrada com sucesso. Compartilhe os links abaixo.
+              O salão foi cadastrado com sucesso. Compartilhe os links abaixo.
             </p>
 
             <div className="space-y-4 text-left">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Link de Acesso Admin (para a barbearia)</label>
+                <label className="text-sm font-medium">Link de Acesso Admin (para o salão)</label>
                 <div className="flex gap-2">
                   <Input value={adminLink} readOnly className="bg-muted/50" />
                   <Button variant="outline" size="icon" onClick={handleCopyLink}>
@@ -256,8 +256,8 @@ const NovaBarbearia = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
-          <h1 className="text-3xl font-display font-bold neon-text">Nova Barbearia</h1>
-          <p className="text-muted-foreground mt-1">Cadastre uma nova barbearia no sistema</p>
+          <h1 className="text-3xl font-display font-bold neon-text">Novo Salão</h1>
+          <p className="text-muted-foreground mt-1">Cadastre um novo salão no sistema</p>
         </motion.div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -270,13 +270,13 @@ const NovaBarbearia = () => {
           >
             <h2 className="text-xl font-display font-semibold mb-6 flex items-center gap-2">
               <Store className="w-5 h-5 text-neon-cyan" />
-              Informações da Barbearia
+              Informações do Salão
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Nome da Barbearia *</label>
+                <label className="text-sm font-medium">Nome do Salão *</label>
                 <Input
-                  placeholder="Ex: Barbearia Neon Style"
+                  placeholder="Ex: Salão Beauty Style"
                   value={form.barbeariaNome}
                   onChange={(e) => updateForm('barbeariaNome', e.target.value)}
                   required
@@ -301,7 +301,7 @@ const NovaBarbearia = () => {
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                   <Input
                     type="email"
-                    placeholder="email@barbearia.com"
+                    placeholder="email@salao.com"
                     value={form.email}
                     onChange={(e) => updateForm('email', e.target.value)}
                     className="pl-12"
@@ -323,7 +323,7 @@ const NovaBarbearia = () => {
                     minLength={4}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">Mínimo 4 caracteres. Essa será a senha de acesso ao painel da barbearia.</p>
+                <p className="text-xs text-muted-foreground">Mínimo 4 caracteres. Essa será a senha de acesso ao painel do salão.</p>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Telefone</label>
@@ -355,7 +355,7 @@ const NovaBarbearia = () => {
               <div className="relative">
                 <FileText className="absolute left-4 top-4 w-5 h-5 text-muted-foreground" />
                 <textarea
-                  placeholder="Descreva a barbearia..."
+                  placeholder="Descreva o salão..."
                   value={form.descricao}
                   onChange={(e) => updateForm('descricao', e.target.value)}
                   className="w-full min-h-[100px] rounded-lg border-2 border-primary/30 bg-input/50 px-4 py-3 pl-12 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/60 transition-all"
@@ -441,7 +441,7 @@ const NovaBarbearia = () => {
               {loading ? (
                 <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
               ) : (
-                'Cadastrar Barbearia'
+                'Cadastrar Salão'
               )}
             </Button>
           </motion.div>

@@ -24,17 +24,17 @@ const Index = () => {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/5 mb-8">
               <Sparkles className="w-4 h-4 text-neon-cyan" />
-              <span className="text-sm text-muted-foreground">Sistema de Barbearias Futurista</span>
+              <span className="text-sm text-muted-foreground">Sistema de Salão de Beleza Futurista</span>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 leading-tight">
-              <span className="neon-text animate-glow">BarberPro</span>
+              <span className="neon-text animate-glow">BeautyPro</span>
               <br />
               <span className="text-foreground/90">Gestão Inteligente</span>
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              O sistema mais avançado para gerenciar sua barbearia. 
+              O sistema mais avançado para gerenciar seu salão de beleza.
               Agendamentos, pagamentos PIX e gestão completa em uma única plataforma.
             </p>
 
@@ -111,14 +111,14 @@ const Index = () => {
               Tudo que você <span className="neon-text">precisa</span>
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Sistema completo para gerenciar múltiplas barbearias com painel exclusivo para cada uma
+              Sistema completo para gerenciar múltiplos salões de beleza com painel exclusivo para cada um
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
-              { icon: Zap, title: 'Multi-Barbearias', desc: 'Cadastre e gerencie várias barbearias com links exclusivos para cada uma', color: 'cyan' },
-              { icon: Shield, title: 'Painel Admin', desc: 'Cada barbearia tem seu próprio painel completo de gestão', color: 'purple' },
+              { icon: Zap, title: 'Multi-Unidades', desc: 'Cadastre e gerencie vários salões com links exclusivos para cada um', color: 'cyan' },
+              { icon: Shield, title: 'Painel Admin', desc: 'Cada salão tem seu próprio painel completo de gestão', color: 'purple' },
               { icon: Clock, title: 'Tempo Real', desc: 'Agenda atualizada em tempo real com notificações', color: 'green' },
               { icon: CreditCard, title: 'Pagamento PIX', desc: 'Integração com Mercado Pago para pagamentos instantâneos', color: 'pink' },
               { icon: Calendar, title: 'Fluxo Completo', desc: 'Do agendamento à confirmação em poucos cliques', color: 'cyan' },
@@ -158,7 +158,7 @@ const Index = () => {
               Comece <span className="neon-text">Agora</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-xl mx-auto">
-              Acesse o painel gerenciador e cadastre sua primeira barbearia em minutos
+              Acesse o painel gerenciador e cadastre seu primeiro salão em minutos
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="xl" variant="neon" asChild>
@@ -182,10 +182,10 @@ const Index = () => {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Scissors className="w-5 h-5 text-neon-cyan" />
-            <span className="font-display text-lg">BarberPro</span>
+            <span className="font-display text-lg">BeautyPro</span>
           </div>
           <p className="text-muted-foreground text-sm">
-            © 2024 BarberPro. Sistema de Gestão de Barbearias.
+            © 2024 BeautyPro. Sistema de Gestão de Salões de Beleza.
           </p>
         </div>
       </footer>

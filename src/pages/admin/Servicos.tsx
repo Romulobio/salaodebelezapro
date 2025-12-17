@@ -42,7 +42,7 @@ const Servicos = () => {
 
   const fetchServicos = async () => {
     if (!barbearia?.id) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('servicos')
@@ -63,7 +63,7 @@ const Servicos = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!barbearia?.id) return;
-    
+
     setSaving(true);
 
     try {
@@ -130,7 +130,7 @@ const Servicos = () => {
         .eq('id', id);
 
       if (error) throw error;
-      
+
       setServicos(prev => prev.filter(s => s.id !== id));
       toast.success('Serviço removido!');
     } catch (error: any) {
@@ -151,7 +151,7 @@ const Servicos = () => {
 
   return (
     <DashboardLayout type="admin" barbeariaSlug={slug}>
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

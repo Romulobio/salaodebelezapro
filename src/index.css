@@ -6,56 +6,58 @@
 
 @layer base {
   :root {
-    --background: 222 47% 5%;
-    --foreground: 185 100% 50%;
+    /* Base Colors - Soft Light Theme */
+    --background: 330 20% 98%; /* Soft Rose White */
+    --foreground: 330 10% 20%; /* Soft Dark Grey */
 
-    --card: 222 47% 8%;
-    --card-foreground: 185 100% 50%;
+    --card: 0 0% 100%;
+    --card-foreground: 330 10% 20%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 185 100% 50%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 330 10% 20%;
 
-    --primary: 185 100% 50%;
-    --primary-foreground: 222 47% 5%;
+    --primary: 330 60% 70%; /* Soft Rose/Pink */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 185 100% 20%;
-    --secondary-foreground: 185 100% 80%;
+    --secondary: 280 40% 90%; /* Soft Lavender */
+    --secondary-foreground: 280 40% 30%;
 
-    --muted: 222 30% 15%;
-    --muted-foreground: 185 50% 60%;
+    --muted: 330 10% 94%;
+    --muted-foreground: 330 5% 50%;
 
-    --accent: 280 100% 60%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 38 60% 80%; /* Soft Gold/Champagne */
+    --accent-foreground: 38 60% 20%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 185 50% 20%;
-    --input: 185 50% 15%;
-    --ring: 185 100% 50%;
+    --border: 330 20% 90%;
+    --input: 330 20% 96%;
+    --ring: 330 60% 70%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    --neon-cyan: 185 100% 50%;
-    --neon-purple: 280 100% 60%;
-    --neon-pink: 320 100% 60%;
-    --neon-green: 150 100% 50%;
+    /* Legacy Neon Vars remaped for compatibility but soft */
+    --neon-cyan: 330 60% 70%; /* Now Pink */
+    --neon-purple: 280 40% 70%; /* Soft Purple */
+    --neon-pink: 320 60% 70%;
+    --neon-green: 150 40% 70%; /* Soft Green */
     
-    --gradient-neon: linear-gradient(135deg, hsl(185 100% 50%) 0%, hsl(280 100% 60%) 100%);
-    --gradient-dark: linear-gradient(180deg, hsl(222 47% 8%) 0%, hsl(222 47% 3%) 100%);
+    --gradient-neon: linear-gradient(135deg, hsl(330 60% 80%) 0%, hsl(280 60% 80%) 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(330 20% 98%) 0%, hsl(330 20% 95%) 100%);
     
-    --shadow-neon: 0 0 20px hsl(185 100% 50% / 0.4);
-    --shadow-neon-lg: 0 0 40px hsl(185 100% 50% / 0.5);
-    --shadow-purple: 0 0 20px hsl(280 100% 60% / 0.4);
+    --shadow-neon: 0 4px 20px hsl(330 60% 70% / 0.15);
+    --shadow-neon-lg: 0 10px 40px hsl(330 60% 70% / 0.2);
+    --shadow-purple: 0 4px 20px hsl(280 60% 70% / 0.15);
 
-    --sidebar-background: 222 47% 6%;
-    --sidebar-foreground: 185 100% 50%;
-    --sidebar-primary: 185 100% 50%;
-    --sidebar-primary-foreground: 222 47% 5%;
-    --sidebar-accent: 185 100% 15%;
-    --sidebar-accent-foreground: 185 100% 80%;
-    --sidebar-border: 185 50% 15%;
-    --sidebar-ring: 185 100% 50%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 330 10% 30%;
+    --sidebar-primary: 330 60% 70%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 330 20% 95%;
+    --sidebar-accent-foreground: 330 60% 50%;
+    --sidebar-border: 330 20% 90%;
+    --sidebar-ring: 330 60% 70%;
   }
 
   .dark {
@@ -72,7 +74,7 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
-    background: linear-gradient(180deg, hsl(222 47% 5%) 0%, hsl(222 47% 2%) 100%);
+    background: var(--background);
     min-height: 100vh;
   }
 
@@ -83,8 +85,8 @@
 
 @layer components {
   .neon-card {
-    @apply bg-card/50 backdrop-blur-xl border border-primary/20 rounded-xl p-6;
-    box-shadow: 0 0 15px hsl(185 100% 50% / 0.15), inset 0 0 30px hsl(185 100% 50% / 0.05);
+    @apply bg-card border border-border/50 rounded-xl p-6;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
   }
 
   .neon-card-hover {
@@ -93,18 +95,18 @@
 
   .neon-card-hover:hover {
     @apply border-primary/40;
-    box-shadow: 0 0 30px hsl(185 100% 50% / 0.3), inset 0 0 40px hsl(185 100% 50% / 0.1);
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,0.1);
     transform: translateY(-2px);
   }
 
   .neon-text {
-    @apply text-primary;
-    text-shadow: 0 0 10px hsl(185 100% 50% / 0.8), 0 0 20px hsl(185 100% 50% / 0.5);
+    @apply text-foreground;
+    text-shadow: none;
   }
 
   .neon-text-purple {
-    @apply text-accent;
-    text-shadow: 0 0 10px hsl(280 100% 60% / 0.8), 0 0 20px hsl(280 100% 60% / 0.5);
+    @apply text-primary;
+    text-shadow: none;
   }
 
   .neon-glow {
@@ -136,10 +138,10 @@
 
   @keyframes pulse-neon {
     0%, 100% {
-      box-shadow: 0 0 20px hsl(185 100% 50% / 0.4);
+      opacity: 1;
     }
     50% {
-      box-shadow: 0 0 40px hsl(185 100% 50% / 0.7);
+      opacity: 0.8;
     }
   }
 
@@ -149,10 +151,10 @@
 
   @keyframes glow {
     from {
-      text-shadow: 0 0 10px hsl(185 100% 50% / 0.8), 0 0 20px hsl(185 100% 50% / 0.5);
+      opacity: 0.8;
     }
     to {
-      text-shadow: 0 0 20px hsl(185 100% 50% / 1), 0 0 40px hsl(185 100% 50% / 0.8), 0 0 60px hsl(185 100% 50% / 0.5);
+      opacity: 1;
     }
   }
 
@@ -177,3 +179,128 @@
     100% { top: 100%; }
   }
 }
+  .theme-manager {
+      /* Dark Green Theme */
+      --background: 150 30% 5%;
+      /* Very dark green/black */
+      --foreground: 150 10% 90%;
+      /* Light grey-green */
+
+      --card: 150 30% 8%;
+      --card-foreground: 150 10% 90%;
+
+      --popover: 150 30% 8%;
+      --popover-foreground: 150 10% 90%;
+
+      --primary: 142 70% 50%;
+      /* Bright Green */
+      --primary-foreground: 150 30% 5%;
+
+      --secondary: 150 20% 20%;
+      /* Dark Green Secondary */
+      --secondary-foreground: 142 70% 50%;
+
+      --muted: 150 20% 15%;
+      --muted-foreground: 150 10% 60%;
+
+      --accent: 142 70% 40%;
+      --accent-foreground: 150 10% 90%;
+
+      --destructive: 0 60% 50%;
+      --destructive-foreground: 0 0% 100%;
+
+      --border: 150 20% 20%;
+      --input: 150 20% 15%;
+      --ring: 142 70% 50%;
+
+      /* Neon Overrides */
+      --neon-cyan: 142 70% 50%;
+      /* Green */
+      --neon-purple: 160 60% 45%;
+      /* Teal/Emerald */
+      --neon-pink: 142 70% 60%;
+      /* Lighter Green */
+      --neon-green: 142 70% 50%;
+      /* Green */
+
+      --gradient-neon: linear-gradient(135deg, hsl(142 70% 40%) 0%, hsl(160 60% 40%) 100%);
+      --gradient-dark: linear-gradient(180deg, hsl(150 30% 5%) 0%, hsl(150 30% 8%) 100%);
+
+      --shadow-neon: 0 4px 20px hsl(142 70% 50% / 0.15);
+      --shadow-neon-lg: 0 10px 40px hsl(142 70% 50% / 0.2);
+      --shadow-purple: 0 4px 20px hsl(160 60% 45% / 0.15);
+
+      --sidebar-background: 150 30% 7%;
+      --sidebar-foreground: 150 10% 80%;
+      --sidebar-primary: 142 70% 50%;
+      --sidebar-primary-foreground: 150 30% 5%;
+      --sidebar-accent: 150 20% 20%;
+      --sidebar-accent-foreground: 142 70% 50%;
+      --sidebar-border: 150 20% 20%;
+      --sidebar-ring: 142 70% 50%;
+  }
+  .theme-manager {
+    /* Dark Green Theme */
+    --background: 156 40% 6%;
+    /* #09160e Very dark green */
+    --foreground: 142 50% 95%;
+    /* #e6f7eb Light mint */
+
+    --card: 156 40% 8%;
+    /* #0c1f13 */
+    --card-foreground: 142 50% 95%;
+
+    --popover: 156 40% 8%;
+    --popover-foreground: 142 50% 95%;
+
+    --primary: 142 70% 45%;
+    /* #22c55e Green-500 equivalent */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 156 30% 15%;
+    /* Dark green secondary */
+    --secondary-foreground: 142 70% 45%;
+
+    --muted: 156 30% 12%;
+    --muted-foreground: 156 10% 60%;
+
+    --accent: 142 70% 35%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 156 30% 15%;
+    --input: 156 30% 15%;
+    --ring: 142 70% 45%;
+
+    --radius: 0.75rem;
+
+    /* Neon Overrides - Green/Gold theme */
+    --neon-cyan: 142 70% 45%;
+    /* Green */
+    --neon-purple: 45 90% 50%;
+    /* Gold instead of purple */
+    --neon-pink: 120 40% 50%;
+    /* Forest Green */
+    --neon-green: 142 70% 45%;
+    /* Green */
+
+    --gradient-neon: linear-gradient(135deg, hsl(142 70% 45%) 0%, hsl(45 90% 50%) 100%);
+    /* Green to Gold */
+    --gradient-dark: linear-gradient(180deg, hsl(156 40% 6%) 0%, hsl(156 40% 10%) 100%);
+
+    --shadow-neon: 0 4px 20px hsl(142 70% 45% / 0.15);
+    --shadow-neon-lg: 0 10px 40px hsl(142 70% 45% / 0.2);
+    --shadow-purple: 0 4px 20px hsl(45 90% 50% / 0.15);
+    /* Gold shadow */
+
+    --sidebar-background: 156 40% 7%;
+    --sidebar-foreground: 142 20% 80%;
+    --sidebar-primary: 142 70% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 156 30% 15%;
+    --sidebar-accent-foreground: 142 70% 45%;
+    --sidebar-border: 156 30% 15%;
+    --sidebar-ring: 142 70% 45%;
+  }

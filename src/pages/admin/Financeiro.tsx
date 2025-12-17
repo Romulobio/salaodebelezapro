@@ -86,7 +86,7 @@ const Financeiro = () => {
 
   return (
     <DashboardLayout type="admin" barbeariaSlug={slug}>
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -182,8 +182,8 @@ const Financeiro = () => {
                   <div>
                     <p className="text-sm text-muted-foreground">Ticket Médio</p>
                     <p className="text-2xl font-display font-bold text-neon-purple">
-                      R$ {agendamentosConcluidos.length > 0 
-                        ? (receitaTotal / agendamentosConcluidos.length).toFixed(2) 
+                      R$ {agendamentosConcluidos.length > 0
+                        ? (receitaTotal / agendamentosConcluidos.length).toFixed(2)
                         : '0.00'}
                     </p>
                   </div>

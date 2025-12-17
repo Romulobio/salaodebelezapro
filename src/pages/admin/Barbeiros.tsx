@@ -92,7 +92,7 @@ const Barbeiros = () => {
           .eq('id', editingId);
 
         if (error) throw error;
-        toast.success('Barbeiro atualizado!');
+        toast.success('Colaborador atualizado!');
       } else {
         const { error } = await supabase
           .from('barbeiros')
@@ -105,7 +105,7 @@ const Barbeiros = () => {
           });
 
         if (error) throw error;
-        toast.success('Barbeiro adicionado!');
+        toast.success('Colaborador adicionado!');
       }
 
       await fetchBarbeiros();
@@ -145,7 +145,7 @@ const Barbeiros = () => {
       if (error) throw error;
 
       setBarbeiros(prev => prev.filter(b => b.id !== id));
-      toast.success('Barbeiro removido!');
+      toast.success('Colaborador removido!');
     } catch (error: any) {
       console.error('Error deleting barbeiro:', error);
       toast.error(error.message || 'Erro ao remover barbeiro');
@@ -164,7 +164,7 @@ const Barbeiros = () => {
 
   return (
     <DashboardLayout type="admin" barbeariaSlug={slug}>
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -174,14 +174,14 @@ const Barbeiros = () => {
           // ...
 
           <div>
-            <h1 className="text-3xl font-display font-bold neon-text">Barbeiros</h1>
-            <p className="text-muted-foreground mt-1">Gerencie a equipe de barbeiros</p>
+            <h1 className="text-3xl font-display font-bold neon-text">Colaboradores</h1>
+            <p className="text-muted-foreground mt-1">Gerencie a equipe de colaboradores</p>
           </div>
           <Button
             variant="neon"
             onClick={() => {
               if (isBlocked) {
-                toast.error(`Seu plano permite apenas ${plano?.max_barbeiros || 3} barbeiros.`);
+                toast.error(`Seu plano permite apenas ${plano?.max_barbeiros || 3} colaboradores.`);
                 return;
               }
               setShowForm(true);
@@ -190,7 +190,7 @@ const Barbeiros = () => {
             className={isBlocked ? "opacity-50 cursor-not-allowed" : ""}
           >
             <Plus className="w-5 h-5 mr-2" />
-            Novo Barbeiro
+            Novo Colaborador
           </Button>
         </motion.div>
 
@@ -202,13 +202,13 @@ const Barbeiros = () => {
             className="neon-card mb-8"
           >
             <h2 className="text-xl font-display font-semibold mb-4">
-              {editingId ? 'Editar Barbeiro' : 'Novo Barbeiro'}
+              {editingId ? 'Editar Colaborador' : 'Novo Colaborador'}
             </h2>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Nome *</label>
                 <Input
-                  placeholder="Nome do barbeiro"
+                  placeholder="Nome do colaborador"
                   value={form.nome}
                   onChange={(e) => setForm({ ...form, nome: e.target.value })}
                   required
@@ -225,7 +225,7 @@ const Barbeiros = () => {
               <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-medium">Bio</label>
                 <Input
-                  placeholder="Breve descrição do barbeiro"
+                  placeholder="Breve descrição do colaborador"
                   value={form.bio}
                   onChange={(e) => setForm({ ...form, bio: e.target.value })}
                 />
@@ -258,11 +258,11 @@ const Barbeiros = () => {
         {barbeiros.length === 0 ? (
           <div className="neon-card text-center py-12">
             <User className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Nenhum barbeiro cadastrado</h3>
-            <p className="text-muted-foreground mb-4">Adicione seu primeiro barbeiro para começar</p>
+            <h3 className="text-lg font-semibold mb-2">Nenhum colaborador cadastrado</h3>
+            <p className="text-muted-foreground mb-4">Adicione seu primeiro colaborador para começar</p>
             <Button variant="neon" onClick={() => setShowForm(true)}>
               <Plus className="w-5 h-5 mr-2" />
-              Novo Barbeiro
+              Novo Colaborador
             </Button>
           </div>
         ) : (

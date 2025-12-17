@@ -26,14 +26,14 @@ const ManagerDashboard = () => {
 
   const stats = [
     {
-      title: 'Total Barbearias',
+      title: 'Total de Clientes',
       value: (barbearias?.length || 0).toString(),
       icon: Store,
       variant: 'default' as const,
       trend: { value: 12, isPositive: true }
     },
     {
-      title: 'Barbearias Ativas',
+      title: 'Clientes Ativos',
       value: barbeariasAtivas.length.toString(),
       icon: Users,
       variant: 'purple' as const,
@@ -57,7 +57,7 @@ const ManagerDashboard = () => {
 
   return (
     <DashboardLayout type="manager">
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -65,12 +65,12 @@ const ManagerDashboard = () => {
         >
           <div>
             <h1 className="text-3xl font-display font-bold neon-text">Painel Gerenciador</h1>
-            <p className="text-muted-foreground mt-1">Gerencie todas as barbearias do sistema</p>
+            <p className="text-muted-foreground mt-1">Gerencie todos os clientes do sistema</p>
           </div>
           <Button variant="neon" asChild>
             <Link to="/manager/barbearias/nova">
               <Plus className="w-5 h-5 mr-2" />
-              Nova Barbearia
+              Novo Cliente
             </Link>
           </Button>
         </motion.div>
@@ -89,7 +89,7 @@ const ManagerDashboard = () => {
           transition={{ delay: 0.4 }}
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-display font-semibold">Barbearias Cadastradas</h2>
+            <h2 className="text-2xl font-display font-semibold">Clientes Cadastrados</h2>
             <Link to="/manager/barbearias" className="text-primary hover:underline text-sm">
               Ver todas →
             </Link>
@@ -108,9 +108,9 @@ const ManagerDashboard = () => {
           ) : (
             <div className="text-center py-12 text-muted-foreground">
               <Store className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>Nenhuma barbearia cadastrada ainda.</p>
+              <p>Nenhum cliente cadastrado ainda.</p>
               <Button variant="outline" className="mt-4" asChild>
-                <Link to="/manager/barbearias/nova">Cadastrar primeira barbearia</Link>
+                <Link to="/manager/barbearias/nova">Cadastrar primeiro cliente</Link>
               </Button>
             </div>
           )}

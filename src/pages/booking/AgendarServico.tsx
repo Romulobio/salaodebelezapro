@@ -47,7 +47,7 @@ const AgendarServico = () => {
             Voltar
           </Button>
           <h1 className="text-4xl font-display font-bold mb-2">
-            <span className="neon-text">{barbearia?.nome || 'Barbearia'}</span>
+            <span className="neon-text">{barbearia?.nome || 'Salão'}</span>
           </h1>
           <p className="text-muted-foreground">Escolha o serviço desejado</p>
 
@@ -55,9 +55,8 @@ const AgendarServico = () => {
           <div className="flex items-center justify-center gap-2 mt-8">
             {['Serviço', 'Barbeiro', 'Data', 'Horário', 'Pagamento'].map((step, i) => (
               <div key={step} className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                  i === 0 ? 'bg-primary text-primary-foreground shadow-neon' : 'bg-muted text-muted-foreground'
-                }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i === 0 ? 'bg-primary text-primary-foreground shadow-neon' : 'bg-muted text-muted-foreground'
+                  }`}>
                   {i + 1}
                 </div>
                 {i < 4 && <div className="w-8 h-0.5 bg-border" />}
@@ -76,11 +75,10 @@ const AgendarServico = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 onClick={() => setServicoSelecionado(servico.id)}
-                className={`neon-card-hover text-left transition-all ${
-                  servicoSelecionado === servico.id
+                className={`neon-card-hover text-left transition-all ${servicoSelecionado === servico.id
                     ? 'border-primary shadow-neon'
                     : ''
-                }`}
+                  }`}
               >
                 <div className="flex items-start gap-4">
                   <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
@@ -114,7 +112,7 @@ const AgendarServico = () => {
           <div className="neon-card text-center py-12">
             <Scissors className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Nenhum serviço disponível</h3>
-            <p className="text-muted-foreground">Esta barbearia ainda não cadastrou serviços</p>
+            <p className="text-muted-foreground">Este salão ainda não cadastrou serviços</p>
           </div>
         )}
 

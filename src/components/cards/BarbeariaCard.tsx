@@ -85,9 +85,9 @@ export const BarbeariaCard = ({ barbearia, index, planos }: BarbeariaCardProps) 
         ativo: novoStatus,
       }),
       {
-        loading: `${action} barbearia...`,
-        success: `Barbearia ${novoStatus ? 'desbloqueada' : 'bloqueada'} com sucesso!`,
-        error: 'Erro ao alterar status da barbearia'
+        loading: `${action} salão...`,
+        success: `Salão ${novoStatus ? 'desbloqueado' : 'bloqueado'} com sucesso!`,
+        error: 'Erro ao alterar status do salão'
       }
     );
   };
@@ -217,9 +217,9 @@ export const BarbeariaCard = ({ barbearia, index, planos }: BarbeariaCardProps) 
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Excluir Barbearia</AlertDialogTitle>
+                  <AlertDialogTitle>Excluir Salão</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Tem certeza que deseja excluir a barbearia "{barbearia.nome}"?
+                    Tem certeza que deseja excluir o salão "{barbearia.nome}"?
                     Esta ação não pode ser desfeita.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -239,11 +239,11 @@ export const BarbeariaCard = ({ barbearia, index, planos }: BarbeariaCardProps) 
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editar Barbearia</DialogTitle>
+            <DialogTitle>Editar Salão</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Nome da Barbearia</Label>
+              <Label>Nome do Salão</Label>
               <Input
                 value={editData.nome}
                 onChange={(e) => setEditData({ ...editData, nome: e.target.value })}

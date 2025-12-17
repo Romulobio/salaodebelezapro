@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -74,10 +75,10 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        neon: "0 0 20px hsl(185 100% 50% / 0.4)",
-        "neon-lg": "0 0 40px hsl(185 100% 50% / 0.5)",
-        "neon-purple": "0 0 20px hsl(280 100% 60% / 0.4)",
-        "neon-inner": "inset 0 0 30px hsl(185 100% 50% / 0.1)",
+        neon: "var(--shadow-neon)",
+        "neon-lg": "var(--shadow-neon-lg)",
+        "neon-purple": "var(--shadow-purple)",
+        "neon-inner": "inset 0 0 30px rgba(0,0,0,0.02)",
       },
       keyframes: {
         "accordion-down": {
@@ -115,5 +116,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animate],
 } satisfies Config;

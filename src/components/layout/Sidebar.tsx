@@ -38,7 +38,7 @@ export const Sidebar = ({ type, barbeariaSlug, className, onLinkClick }: Sidebar
 
   const managerLinks = [
     { href: '/manager', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/manager/barbearias', icon: Store, label: 'Barbearias' },
+    { href: '/manager/barbearias', icon: Store, label: 'Clientes' },
     { href: '/manager/financeiro', icon: DollarSign, label: 'Financeiro' },
     { href: '/manager/configuracoes', icon: Settings, label: 'Configurações' },
   ];
@@ -46,7 +46,7 @@ export const Sidebar = ({ type, barbeariaSlug, className, onLinkClick }: Sidebar
   const adminLinks = [
     { href: `/admin/${barbeariaSlug}`, icon: LayoutDashboard, label: 'Dashboard' },
     { href: `/admin/${barbeariaSlug}/servicos`, icon: Scissors, label: 'Serviços' },
-    { href: `/admin/${barbeariaSlug}/barbeiros`, icon: Users, label: 'Barbeiros' },
+    { href: `/admin/${barbeariaSlug}/barbeiros`, icon: Users, label: 'Colaboradores' },
     { href: `/admin/${barbeariaSlug}/agenda`, icon: Calendar, label: 'Agenda' },
     { href: `/admin/${barbeariaSlug}/horarios`, icon: Clock, label: 'Horários' },
     { href: `/admin/${barbeariaSlug}/financeiro`, icon: DollarSign, label: 'Financeiro' },
