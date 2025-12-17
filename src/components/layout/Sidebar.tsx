@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { useBarbeariaBySlug } from '@/hooks/useBarbearia';
 
 interface SidebarProps {
   type: 'manager' | 'admin';
@@ -27,6 +28,10 @@ interface SidebarProps {
 export const Sidebar = ({ type, barbeariaSlug, className, onLinkClick }: SidebarProps) => {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+
+  // Fetch barbearia name if in admin mode
+  const { data: barbearia } = useBarbeariaBySlug(type === 'admin' ? barbeariaSlug : undefined);
+  const displayName = type === 'manager' ? 'Gerenciador' : (barbearia?.nome || 'BarberPro');
 
   // Se tiver onLinkClick, assumimos que é mobile, então nunca colapsa
   const isMobile = !!onLinkClick;
@@ -72,9 +77,10 @@ export const Sidebar = ({ type, barbeariaSlug, className, onLinkClick }: Sidebar
             <motion.span
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="font-display text-lg neon-text"
+              className="font-display text-lg neon-text truncate max-w-[160px]"
+              title={displayName}
             >
-              BarberPro
+              {displayName}
             </motion.span>
           )}
         </Link>
