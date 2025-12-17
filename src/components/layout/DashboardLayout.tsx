@@ -1,4 +1,3 @@
-```typescript
 import { ReactNode, useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Menu, Scissors } from 'lucide-react';
@@ -48,7 +47,7 @@ export const DashboardLayout = ({ children, type, barbeariaSlug }: DashboardLayo
           <div className="flex-1">
             {children}
           </div>
-          
+
           {/* Footer */}
           <footer className="py-8 px-6 border-t border-border/50 mt-auto">
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">

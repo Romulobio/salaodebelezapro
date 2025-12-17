@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Scissors, Lock, ArrowRight } from 'lucide-react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Scissors, Lock, ArrowRight, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
@@ -125,63 +125,99 @@ const BarbeariaLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-neon-cyan/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-neon-purple/10 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-cyan/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-neon-purple/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-md"
-      >
-        <div className="neon-card p-8">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center shadow-neon">
-                <Scissors className="w-6 h-6 text-background" />
-              </div>
+      {/* Header */}
+      <header className="py-6 px-6 border-b border-white/5 bg-background/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center shadow-neon group-hover:scale-105 transition-transform">
+              <Scissors className="w-5 h-5 text-background" />
             </div>
-            <h1 className="text-3xl font-display font-bold neon-text mb-2">
-              Acesso Admin
-            </h1>
-            <p className="text-muted-foreground">
-              Entre com a senha da sua barbearia
-            </p>
+            <span className="font-display text-xl font-bold">
+              <span className="neon-text">BarberPro</span>
+            </span>
+          </Link>
+
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5">
+            <Shield className="w-4 h-4 text-neon-purple" />
+            <span className="text-sm font-medium text-muted-foreground">Área Administrativa</span>
           </div>
+        </div>
+      </header>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Senha</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  type="password"
-                  placeholder="••••••••"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  className="pl-12"
-                  required
-                  minLength={4}
-                />
-              </div>
+      {/* Main Content */}
+      <main className="flex-1 flex items-center justify-center px-6 py-12 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md"
+        >
+          <div className="neon-card p-8 border-primary/20 bg-card/60 backdrop-blur-md">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-display font-bold neon-text mb-2">
+                Painel da Barbearia
+              </h1>
+              <p className="text-muted-foreground">
+                Entre com sua senha de administrador para gerenciar
+              </p>
             </div>
 
-            <Button type="submit" size="lg" variant="neon" className="w-full" disabled={loading}>
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-              ) : (
-                <>
-                  Entrar
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </>
-              )}
-            </Button>
-          </form>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Nome da Barbearia (Visual Apenas) */}
+              <div className="bg-muted/30 p-3 rounded-lg text-center border border-border/50 mb-6">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider">Acessando</span>
+                <p className="font-display font-semibold text-lg text-foreground mt-1 capitalize">{slug?.replace(/-/g, ' ')}</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Senha de Acesso</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    type="password"
+                    placeholder="••••••••"
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    className="pl-12 bg-background/50 border-input/50 focus:border-neon-cyan/50 focus:ring-neon-cyan/20"
+                    required
+                    minLength={4}
+                  />
+                </div>
+              </div>
+
+              <Button type="submit" size="lg" variant="neon" className="w-full font-bold shadow-neon hover:shadow-neon-hover transition-all" disabled={loading}>
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
+                ) : (
+                  <>
+                    Entrar no Painel
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </>
+                )}
+              </Button>
+            </form>
+          </div>
+        </motion.div>
+      </main>
+
+      {/* Footer */}
+      <footer className="py-8 px-6 border-t border-white/5 bg-background/50 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 opacity-70 hover:opacity-100 transition-opacity">
+            <Scissors className="w-5 h-5 text-neon-cyan" />
+            <span className="font-display text-lg">BarberPro</span>
+          </div>
+          <p className="text-muted-foreground text-sm">
+            © 2024 BarberPro. Sistema de Gestão de Barbearias.
+          </p>
         </div>
-      </motion.div>
+      </footer>
     </div>
   );
 };
