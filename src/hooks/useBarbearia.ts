@@ -110,12 +110,16 @@ export const useDeleteBarbearia = () => {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('barbearias')
-        .delete()
-        .eq('id', id);
+      // Use Edge Function to bypass RLS policies
+      const { data, error } = await supabase.functions.invoke('barbearia-auth', {
+        body: {
+          action: 'delete_barbearia',
+          barbearia_id: id,
+        }
+      });
 
       if (error) throw error;
+      if (!data.success) throw new Error(data.error || 'Erro desconhecido ao excluir');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['barbearias'] });

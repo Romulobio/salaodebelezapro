@@ -190,6 +190,26 @@ serve(async (req) => {
       );
     }
 
+    if (action === 'delete_barbearia') {
+      const { error } = await supabase
+        .from('barbearias')
+        .delete()
+        .eq('id', barbearia_id);
+
+      if (error) {
+        console.error('Error deleting barbearia (Admin):', error);
+        return new Response(
+          JSON.stringify({ success: false, error: 'Erro ao excluir barbearia: ' + error.message }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ success: true }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
       JSON.stringify({ error: 'Ação inválida' }),
       { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
