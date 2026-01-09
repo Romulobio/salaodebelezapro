@@ -14,6 +14,7 @@ import ManagerDashboard from "./pages/manager/ManagerDashboard";
 import ManagerFinanceiro from "./pages/manager/ManagerFinanceiro";
 import NovaBarbearia from "./pages/manager/NovaBarbearia";
 import ManagerConfiguracoes from "./pages/manager/ManagerConfiguracoes";
+import SecretRegister from "./pages/SecretRegister";
 
 // Barbearia Login
 import BarbeariaLogin from "./pages/barbearia/BarbeariaLogin";
@@ -48,6 +49,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth/login" element={<Login />} />
+          <Route path="/secret-register" element={<SecretRegister />} />
 
           {/* Manager Panel (Developer) */}
           <Route path="/manager" element={<ManagerDashboard />} />
