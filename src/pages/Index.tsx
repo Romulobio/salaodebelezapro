@@ -40,14 +40,9 @@ const Index = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="xl" variant="neon" asChild>
-                <Link to="/manager">
+                <Link to="/auth/login">
                   Painel Gerenciador
                   <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-              </Button>
-              <Button size="xl" variant="outline" asChild>
-                <Link to="/agendar/neon-style">
-                  Ver Demo Agendamento
                 </Link>
               </Button>
             </div>
@@ -162,14 +157,9 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="xl" variant="neon" asChild>
-                <Link to="/manager">
+                <Link to="/auth/login">
                   Acessar Painel
                   <ArrowRight className="w-5 h-5 ml-2" />
-                </Link>
-              </Button>
-              <Button size="xl" variant="outline" asChild>
-                <Link to="/auth/login">
-                  Fazer Login
                 </Link>
               </Button>
             </div>

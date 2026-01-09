@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 
 // Pages
 import Index from "./pages/Index";
@@ -51,12 +52,14 @@ const App = () => (
           <Route path="/auth/login" element={<Login />} />
           <Route path="/secret-register" element={<SecretRegister />} />
 
-          {/* Manager Panel (Developer) */}
-          <Route path="/manager" element={<ManagerDashboard />} />
-          <Route path="/manager/barbearias" element={<ManagerDashboard />} />
-          <Route path="/manager/barbearias/nova" element={<NovaBarbearia />} />
-          <Route path="/manager/financeiro" element={<ManagerFinanceiro />} />
-          <Route path="/manager/configuracoes" element={<ManagerConfiguracoes />} />
+          {/* Manager Panel (Developer) - PROTECTED */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/manager" element={<ManagerDashboard />} />
+            <Route path="/manager/barbearias" element={<ManagerDashboard />} />
+            <Route path="/manager/barbearias/nova" element={<NovaBarbearia />} />
+            <Route path="/manager/financeiro" element={<ManagerFinanceiro />} />
+            <Route path="/manager/configuracoes" element={<ManagerConfiguracoes />} />
+          </Route>
 
           {/* Barbearia Login */}
           <Route path="/barbearia/:slug/login" element={<BarbeariaLogin />} />
